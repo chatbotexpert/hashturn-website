@@ -1,54 +1,26 @@
 ---
 export const prerender = false;
 import AdminLayout from '../../../../layouts/AdminLayout.astro';
-import { readFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { sql } from '../../../../lib/db';
 
 const { slug } = Astro.params;
 if (!slug) return Astro.redirect('/admin/projects');
 
-const projectsDir = join(process.cwd(), 'src', 'content', 'projects');
+const rows = await sql`SELECT * FROM projects WHERE slug=${slug}`.catch(() => []);
+if (!rows.length) return Astro.redirect('/admin/projects');
 
-let title = '';
-let client = '';
-let service = 'Business Process Automation';
-let toolsStr = '';
-let description = '';
-let results = '';
-let featured = false;
-let order = 0;
-let heroImage = '';
-let content = '';
-let notFound = false;
-
-try {
-  const raw = await readFile(join(projectsDir, `${slug}.md`), 'utf-8');
-  const fmMatch = raw.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
-  if (fmMatch) {
-    const fm = fmMatch[1];
-    content = fmMatch[2].trim();
-
-    const get = (key: string) => fm.match(new RegExp(`^${key}:\\s*"?([^"\\n]+)"?`, 'm'))?.[1]?.trim() ?? '';
-    const toolsMatch = fm.match(/^tools:\s*\[([^\]]*)\]/m);
-    const toolsArray = toolsMatch?.[1]
-      ? toolsMatch[1].split(',').map(t => t.trim().replace(/^"|"$/g, '')).filter(Boolean)
-      : [];
-
-    title = get('title');
-    client = get('client');
-    service = get('service') || service;
-    toolsStr = toolsArray.join(', ');
-    description = get('description');
-    results = get('results');
-    featured = fm.includes('featured: true');
-    order = parseInt(get('order') || '0', 10);
-    heroImage = get('heroImage');
-  }
-} catch {
-  notFound = true;
-}
-
-if (notFound) return Astro.redirect('/admin/projects');
+const p = rows[0] as Record<string, unknown>;
+const title = String(p.title ?? '');
+const client = String(p.client ?? '');
+const service = String(p.service ?? 'Business Process Automation');
+const toolsArr: string[] = JSON.parse(String(p.tools ?? '[]'));
+const toolsStr = toolsArr.join(', ');
+const description = String(p.description ?? '');
+const results = String(p.results ?? '');
+const heroImage = String(p.hero_image ?? '');
+const content = String(p.content ?? '');
+const featured = Boolean(p.featured);
+const order = Number(p.display_order ?? 0);
 ---
 
 <AdminLayout title={`Edit: ${title}`} activeNav="projects">
@@ -121,10 +93,10 @@ if (notFound) return Astro.redirect('/admin/projects');
 
       <div class="form-group">
         <label for="heroImage">Hero Image</label>
-        {heroImage && heroImage.startsWith('/') && (
+        {heroImage && (
           <img src={heroImage} alt="Current hero" style="max-height:180px; border-radius:8px; object-fit:cover; margin-bottom:0.5rem;" />
         )}
-        <input type="file" id="heroImage" name="heroImage" accept="image/*" onchange="previewImage(this, 'imgPreview')" />
+        <input type="file" id="heroImage" name="heroImage" accept="image/*" onchange="previewImg(this)" />
         <img id="imgPreview" src="" alt="Preview" style="display:none; margin-top:0.5rem; max-height:200px; border-radius:8px; object-fit:cover;" />
         <span style="font-size:0.75rem; color:#9CA3AF;">{heroImage ? 'Upload a new image to replace the current one' : 'Optional. Accepted: JPG, PNG, WebP'}</span>
       </div>
@@ -147,34 +119,20 @@ if (notFound) return Astro.redirect('/admin/projects');
   @media (max-width:640px) { .form-row { grid-template-columns:1fr; } }
   .form-group { display:flex; flex-direction:column; gap:0.4rem; }
   label { font-size:0.8rem; font-weight:600; color:#374151; text-transform:uppercase; letter-spacing:0.04em; }
-  input[type="text"], input[type="number"], textarea, select {
-    background:#fff; border:1.5px solid #D1D5DB; border-radius:8px; padding:0.75rem 1rem;
-    color:#111827; font-family:inherit; font-size:0.9rem; outline:none;
-    transition:border-color 0.15s, box-shadow 0.15s; width:100%;
-  }
+  input[type="text"], input[type="number"], textarea, select { background:#fff; border:1.5px solid #D1D5DB; border-radius:8px; padding:0.75rem 1rem; color:#111827; font-family:inherit; font-size:0.9rem; outline:none; transition:border-color 0.15s, box-shadow 0.15s; width:100%; }
   textarea { resize:vertical; }
   textarea#content { font-family:'Courier New', monospace; font-size:0.85rem; line-height:1.6; }
   input:focus, textarea:focus, select:focus { border-color:#22C55E; box-shadow:0 0 0 3px rgba(34,197,94,0.1); }
-  input::placeholder, textarea::placeholder { color:#9CA3AF; }
-  input[type="file"] {
-    background:#fff; border:1.5px dashed #D1D5DB; border-radius:8px; padding:0.6rem 1rem;
-    color:#111827; cursor:pointer;
-  }
+  input[type="file"] { background:#fff; border:1.5px dashed #D1D5DB; border-radius:8px; padding:0.6rem 1rem; color:#111827; cursor:pointer; }
   input[type="file"]:hover { border-color:#22C55E; }
 </style>
 
-<script>
-  function previewImage(input: HTMLInputElement, previewId: string) {
-    const preview = document.getElementById(previewId) as HTMLImageElement | null;
-    if (!preview) return;
-    if (input.files && input.files[0]) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = (e.target as FileReader).result as string;
-        preview.src = result;
-        preview.style.display = 'block';
-      };
-      reader.readAsDataURL(input.files[0]);
-    }
+<script is:inline>
+  function previewImg(input) {
+    const preview = document.getElementById('imgPreview');
+    if (!preview || !input.files || !input.files[0]) return;
+    const reader = new FileReader();
+    reader.onload = e => { preview.src = e.target.result; preview.style.display = 'block'; };
+    reader.readAsDataURL(input.files[0]);
   }
 </script>

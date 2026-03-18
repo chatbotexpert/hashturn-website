@@ -1,19 +1,13 @@
 import type { APIRoute } from 'astro';
-import { unlink } from 'node:fs/promises';
-import { join } from 'node:path';
+import { sql } from '../../../../lib/db';
 
 export const prerender = false;
 
 export const POST: APIRoute = async ({ request, redirect }) => {
   const data = await request.formData();
   const slug = data.get('slug')?.toString().trim() ?? '';
-
-  if (!slug) {
-    return new Response('Slug is required', { status: 400 });
+  if (slug) {
+    await sql`DELETE FROM projects WHERE slug=${slug}`;
   }
-
-  const filePath = join(process.cwd(), 'src', 'content', 'projects', `${slug}.md`);
-  await unlink(filePath).catch(() => {}); // ignore if file doesn't exist
-
   return redirect('/admin/projects');
 };

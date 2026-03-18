@@ -1,20 +1,10 @@
 ---
+export const prerender = false;
 import Layout from '../layouts/Layout.astro';
-import reviewsData from '../../data/reviews.json';
+import { sql } from '../lib/db';
 
-interface Review {
-  id: string;
-  name: string;
-  location: string;
-  initials: string;
-  rating: number;
-  text: string;
-  source: string;
-  featured: boolean;
-  createdAt: string;
-}
-
-const featuredReviews = (reviewsData as Review[]).filter(r => r.featured);
+const dbReviews = await sql`SELECT id, name, location, initials, rating, review_text AS text, source FROM reviews WHERE featured=true ORDER BY created_at DESC`.catch(() => []);
+const featuredReviews = dbReviews as Record<string, unknown>[];
 ---
 
 <Layout
@@ -316,16 +306,16 @@ const featuredReviews = (reviewsData as Review[]).filter(r => r.featured);
       <div class="testimonials-grid">
         {featuredReviews.map(review => (
           <div class="testimonial-card">
-            <div class="stars">{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</div>
-            <p class="testimonial-text">"{review.text}"</p>
+            <div class="stars">{'★'.repeat(Number(review.rating))}{'☆'.repeat(5 - Number(review.rating))}</div>
+            <p class="testimonial-text">"{String(review.text)}"</p>
             <div class="testimonial-author">
-              <div class="author-avatar">{review.initials}</div>
+              <div class="author-avatar">{String(review.initials)}</div>
               <div>
-                <strong>{review.name}</strong>
-                <span>{review.location}</span>
+                <strong>{String(review.name)}</strong>
+                <span>{String(review.location)}</span>
               </div>
             </div>
-            <div class="fiverr-badge">&#11088; {review.source === 'fiverr' ? 'Fiverr Verified Review' : `${review.source} Review`}</div>
+            <div class="fiverr-badge">&#11088; {String(review.source).toLowerCase() === 'fiverr' ? 'Fiverr Verified Review' : `${String(review.source)} Review`}</div>
           </div>
         ))}
       </div>

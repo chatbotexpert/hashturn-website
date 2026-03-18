@@ -1,60 +1,9 @@
 ---
 export const prerender = false;
 import AdminLayout from '../../../layouts/AdminLayout.astro';
-import { readdir, readFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { sql } from '../../../lib/db';
 
-interface ProjectMeta {
-  slug: string;
-  title: string;
-  client: string;
-  service: string;
-  tools: string[];
-  featured: boolean;
-  order: number;
-}
-
-async function loadProjects(): Promise<ProjectMeta[]> {
-  const dir = join(process.cwd(), 'src', 'content', 'projects');
-  let files: string[] = [];
-  try {
-    files = (await readdir(dir)).filter(f => f.endsWith('.md') || f.endsWith('.mdx'));
-  } catch {
-    return [];
-  }
-
-  const projects: ProjectMeta[] = [];
-  for (const file of files) {
-    const slug = file.replace(/\.(md|mdx)$/, '');
-    try {
-      const raw = await readFile(join(dir, file), 'utf-8');
-      const fmMatch = raw.match(/^---\n([\s\S]*?)\n---/);
-      if (!fmMatch) continue;
-      const fm = fmMatch[1];
-
-      const get = (key: string) => fm.match(new RegExp(`^${key}:\\s*"?([^"\\n]+)"?`, 'm'))?.[1]?.trim() ?? '';
-      const toolsMatch = fm.match(/^tools:\s*\[([^\]]*)\]/m);
-      const toolsArray = toolsMatch?.[1]
-        ? toolsMatch[1].split(',').map(t => t.trim().replace(/^"|"$/g, '')).filter(Boolean)
-        : [];
-
-      projects.push({
-        slug,
-        title: get('title'),
-        client: get('client'),
-        service: get('service'),
-        tools: toolsArray,
-        featured: fm.includes('featured: true'),
-        order: parseInt(get('order') || '0', 10),
-      });
-    } catch {
-      // skip bad files
-    }
-  }
-  return projects.sort((a, b) => a.order - b.order);
-}
-
-const projects = await loadProjects();
+const projects = await sql`SELECT slug, title, client, service, tools, featured FROM projects ORDER BY display_order ASC, created_at DESC`.catch(() => []);
 ---
 
 <AdminLayout title="Projects" activeNav="projects">
@@ -82,34 +31,37 @@ const projects = await loadProjects();
             </tr>
           </thead>
           <tbody>
-            {projects.map(p => (
-              <tr>
-                <td style="font-weight:500;">{p.title}</td>
-                <td style="color:#4B5563;">{p.client}</td>
-                <td style="color:#6B7280; white-space:nowrap;">{p.service}</td>
-                <td>
-                  <div style="display:flex; gap:0.25rem; flex-wrap:wrap;">
-                    {p.tools.slice(0,3).map(t => <span class="tag-badge">{t}</span>)}
-                    {p.tools.length > 3 && <span style="font-size:0.75rem; color:#9CA3AF;">+{p.tools.length - 3}</span>}
-                  </div>
-                </td>
-                <td>
-                  {p.featured
-                    ? <span style="color:#22C55E; font-size:0.8rem; font-weight:600;">✓ Yes</span>
-                    : <span style="color:#9CA3AF; font-size:0.8rem;">No</span>}
-                </td>
-                <td>
-                  <div style="display:flex; gap:0.5rem;">
-                    <a href={`/admin/projects/edit/${p.slug}`} class="btn-admin btn-admin--outline btn-admin--sm">Edit</a>
-                    <form method="POST" action="/admin/api/projects/delete" style="display:inline;" onsubmit="return confirm('Delete this project?')">
-                      <input type="hidden" name="slug" value={p.slug} />
-                      <button type="submit" class="btn-admin btn-admin--danger btn-admin--sm">Delete</button>
-                    </form>
-                    <a href={`/work/${p.slug}/`} target="_blank" class="btn-admin btn-admin--outline btn-admin--sm">View ↗</a>
-                  </div>
-                </td>
-              </tr>
-            ))}
+            {(projects as Record<string, unknown>[]).map(p => {
+              const toolsArr: string[] = JSON.parse(String(p.tools ?? '[]'));
+              return (
+                <tr>
+                  <td style="font-weight:500;">{String(p.title)}</td>
+                  <td style="color:#4B5563;">{String(p.client)}</td>
+                  <td style="color:#6B7280; white-space:nowrap;">{String(p.service)}</td>
+                  <td>
+                    <div style="display:flex; gap:0.25rem; flex-wrap:wrap;">
+                      {toolsArr.slice(0,3).map(t => <span class="tag-badge">{t}</span>)}
+                      {toolsArr.length > 3 && <span style="font-size:0.75rem; color:#9CA3AF;">+{toolsArr.length - 3}</span>}
+                    </div>
+                  </td>
+                  <td>
+                    {p.featured
+                      ? <span style="color:#22C55E; font-size:0.8rem; font-weight:600;">✓ Yes</span>
+                      : <span style="color:#9CA3AF; font-size:0.8rem;">No</span>}
+                  </td>
+                  <td>
+                    <div style="display:flex; gap:0.5rem;">
+                      <a href={`/admin/projects/edit/${p.slug}`} class="btn-admin btn-admin--outline btn-admin--sm">Edit</a>
+                      <a href={`/work/${p.slug}/`} target="_blank" class="btn-admin btn-admin--outline btn-admin--sm">View ↗</a>
+                      <form method="POST" action="/admin/api/projects/delete" style="display:inline;" onsubmit="return confirm('Delete this project?')">
+                        <input type="hidden" name="slug" value={String(p.slug)} />
+                        <button type="submit" class="btn-admin btn-admin--danger btn-admin--sm">Delete</button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

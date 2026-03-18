@@ -1,20 +1,89 @@
 ---
-import { type CollectionEntry, getCollection, render } from 'astro:content';
-import BlogPost from '../../layouts/BlogPost.astro';
+export const prerender = false;
+import { marked } from 'marked';
+import BaseHead from '../../components/BaseHead.astro';
+import Nav from '../../components/Nav.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import CalendlyPopup from '../../components/CalendlyPopup.astro';
+import { sql } from '../../lib/db';
 
-export async function getStaticPaths() {
-	const posts = await getCollection('blog');
-	return posts.map((post) => ({
-		params: { slug: post.id },
-		props: post,
-	}));
-}
-type Props = CollectionEntry<'blog'>;
+const { slug } = Astro.params;
+if (!slug) return Astro.redirect('/blog');
 
-const post = Astro.props;
-const { Content } = await render(post);
+const rows = await sql`SELECT * FROM blog_posts WHERE slug=${slug}`.catch(() => []);
+if (!rows.length) return Astro.redirect('/blog');
+
+const post = rows[0] as Record<string, unknown>;
+const title = String(post.title ?? '');
+const description = String(post.description ?? '');
+const heroImage = String(post.hero_image ?? '');
+const pubDate = String(post.pub_date ?? '');
+const author = String(post.author ?? '');
+const tags: string[] = JSON.parse(String(post.tags ?? '[]'));
+const htmlContent = await marked(String(post.content ?? ''), { gfm: true });
 ---
 
-<BlogPost {...post.data}>
-	<Content />
-</BlogPost>
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={title} description={description} image={heroImage || undefined} type="article" />
+  </head>
+  <body>
+    <Nav />
+    <main class="blog-post-main">
+      <article>
+        {heroImage && (
+          <div class="hero-image"><img src={heroImage} alt="" /></div>
+        )}
+        <div class="prose">
+          <div class="post-title">
+            <div class="post-date">{pubDate}{author && <span>&nbsp;&middot;&nbsp;{author}</span>}</div>
+            <h1>{title}</h1>
+            {tags.length > 0 && (
+              <div class="post-tags">
+                {tags.map(tag => <span class="tag">{tag}</span>)}
+              </div>
+            )}
+            <hr />
+          </div>
+          <div set:html={htmlContent} />
+        </div>
+      </article>
+      <div class="blog-cta container">
+        <p>Want to automate your business? <a href="/contact" class="btn btn--green">Book a Free Strategy Call</a></p>
+      </div>
+    </main>
+    <SiteFooter />
+    <CalendlyPopup />
+  </body>
+</html>
+
+<style>
+  .blog-post-main { min-height: 60vh; }
+  .hero-image { width:100%; max-height:480px; overflow:hidden; }
+  .hero-image img { width:100%; height:480px; object-fit:cover; display:block; }
+  .prose { width:720px; max-width:calc(100% - 2rem); margin:0 auto; padding:2rem 1rem 3rem; font-size:1.05rem; line-height:1.8; color:var(--gray-700); }
+  .post-title { margin-bottom:2rem; text-align:center; }
+  .post-title h1 { font-size:clamp(1.7rem,4vw,2.5rem); margin:0.5rem 0 1rem; color:var(--gray-900); }
+  .post-date { font-size:0.88rem; color:var(--gray-400); margin-bottom:0.5rem; }
+  .post-tags { display:flex; flex-wrap:wrap; justify-content:center; gap:0.5rem; margin:0.75rem 0; }
+  .tag { font-size:0.75rem; font-weight:600; color:var(--green-dark); background:var(--green-light); padding:0.25rem 0.75rem; border-radius:50px; }
+  .prose hr { border-color:var(--gray-200); margin:1.5rem 0; }
+  .prose :global(h2) { font-size:1.4rem; color:var(--gray-900); margin-top:2rem; margin-bottom:0.75rem; }
+  .prose :global(h3) { font-size:1.1rem; color:var(--gray-900); margin-top:1.5rem; margin-bottom:0.5rem; }
+  .prose :global(p) { margin-bottom:1.25rem; }
+  .prose :global(ul), .prose :global(ol) { padding-left:1.5rem; margin-bottom:1.25rem; }
+  .prose :global(li) { margin-bottom:0.4rem; }
+  .prose :global(a) { color:var(--green-dark); text-decoration:underline; }
+  .prose :global(blockquote) { border-left:4px solid var(--green); margin:1.5rem 0; padding:0.75rem 1.25rem; background:var(--green-light); border-radius:0 var(--r-sm) var(--r-sm) 0; }
+  .prose :global(img) { border-radius:var(--r); margin:1.5rem auto; max-width:100%; display:block; }
+  .prose :global(table) { width:100%; border-collapse:collapse; margin:1.5rem 0; font-size:0.92rem; }
+  .prose :global(th) { background:#F9FAFB; padding:0.65rem 1rem; text-align:left; font-weight:600; border:1px solid var(--gray-200); }
+  .prose :global(td) { padding:0.65rem 1rem; border:1px solid var(--gray-200); }
+  .prose :global(tr:nth-child(even) td) { background:#F9FAFB; }
+  .prose :global(code) { background:#F3F4F6; padding:0.15rem 0.4rem; border-radius:4px; font-size:0.88em; }
+  .prose :global(pre) { background:#1E293B; color:#E2E8F0; padding:1.25rem; border-radius:var(--r-sm); overflow-x:auto; margin:1.5rem 0; }
+  .prose :global(pre code) { background:none; padding:0; }
+  .blog-cta { padding:2.5rem 1.5rem; background:var(--gray-50); border-top:1px solid var(--gray-200); text-align:center; }
+  .blog-cta p { font-size:1.05rem; color:var(--gray-600); display:flex; align-items:center; justify-content:center; gap:1rem; flex-wrap:wrap; margin:0; }
+</style>

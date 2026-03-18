@@ -1,29 +1,25 @@
 ---
 export const prerender = false;
 import AdminLayout from '../../../../layouts/AdminLayout.astro';
-import { readJSON } from '../../../../utils/data';
-
-interface Review {
-  id: string;
-  name: string;
-  location: string;
-  initials: string;
-  rating: number;
-  text: string;
-  source: string;
-  featured: boolean;
-  createdAt: string;
-}
+import { sql } from '../../../../lib/db';
 
 const { id } = Astro.params;
 if (!id) return Astro.redirect('/admin/reviews');
 
-const reviews = await readJSON<Review[]>('reviews.json').catch(() => [] as Review[]);
-const review = reviews.find(r => r.id === id);
-if (!review) return Astro.redirect('/admin/reviews');
+const rows = await sql`SELECT * FROM reviews WHERE id=${id}`.catch(() => []);
+if (!rows.length) return Astro.redirect('/admin/reviews');
+
+const r = rows[0] as Record<string, unknown>;
+const name = String(r.name ?? '');
+const location = String(r.location ?? '');
+const initials = String(r.initials ?? '');
+const rating = Number(r.rating ?? 5);
+const text = String(r.review_text ?? '');
+const source = String(r.source ?? 'Google');
+const featured = Boolean(r.featured);
 ---
 
-<AdminLayout title={`Edit Review: ${review.name}`} activeNav="reviews">
+<AdminLayout title={`Edit Review: ${name}`} activeNav="reviews">
   <div class="admin-card">
     <div class="admin-card__header">
       <span class="admin-card__title">Edit Review</span>
@@ -32,29 +28,29 @@ if (!review) return Astro.redirect('/admin/reviews');
 
     <form method="POST" action="/admin/api/reviews" style="padding:1.5rem; display:flex; flex-direction:column; gap:1.25rem;">
       <input type="hidden" name="_action" value="update" />
-      <input type="hidden" name="id" value={review.id} />
+      <input type="hidden" name="id" value={id} />
 
       <div class="form-row">
         <div class="form-group">
           <label for="name">Client Name *</label>
-          <input type="text" id="name" name="name" required value={review.name} />
+          <input type="text" id="name" name="name" required value={name} />
         </div>
         <div class="form-group">
           <label for="location">Location / Company</label>
-          <input type="text" id="location" name="location" value={review.location} />
+          <input type="text" id="location" name="location" value={location} />
         </div>
       </div>
 
       <div class="form-row">
         <div class="form-group">
           <label for="initials">Initials</label>
-          <input type="text" id="initials" name="initials" maxlength="2" value={review.initials} />
+          <input type="text" id="initials" name="initials" maxlength="2" value={initials} />
         </div>
         <div class="form-group">
           <label for="rating">Rating</label>
           <select id="rating" name="rating">
             {[5,4,3,2,1].map(n => (
-              <option value={n} selected={review.rating === n}>
+              <option value={n} selected={rating === n}>
                 {'★'.repeat(n)}{'☆'.repeat(5-n)} {n} star{n !== 1 ? 's' : ''}
               </option>
             ))}
@@ -67,13 +63,13 @@ if (!review) return Astro.redirect('/admin/reviews');
           <label for="source">Source</label>
           <select id="source" name="source">
             {['Google','Trustpilot','LinkedIn','Direct','Other'].map(s => (
-              <option value={s} selected={review.source === s}>{s}</option>
+              <option value={s} selected={source === s}>{s}</option>
             ))}
           </select>
         </div>
         <div class="form-group" style="justify-content:flex-end; padding-bottom:0.25rem;">
           <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; text-transform:none; letter-spacing:0; font-size:0.9rem;">
-            <input type="checkbox" id="featured" name="featured" checked={review.featured} style="width:auto; accent-color:#22C55E;" />
+            <input type="checkbox" id="featured" name="featured" checked={featured} style="width:auto; accent-color:#22C55E;" />
             Show on homepage (featured)
           </label>
         </div>
@@ -81,7 +77,7 @@ if (!review) return Astro.redirect('/admin/reviews');
 
       <div class="form-group">
         <label for="text">Review Text *</label>
-        <textarea id="text" name="text" rows="4" required>{review.text}</textarea>
+        <textarea id="text" name="text" rows="4" required>{text}</textarea>
       </div>
 
       <div style="display:flex; gap:1rem;">
@@ -97,11 +93,7 @@ if (!review) return Astro.redirect('/admin/reviews');
   @media (max-width:640px) { .form-row { grid-template-columns:1fr; } }
   .form-group { display:flex; flex-direction:column; gap:0.4rem; }
   label { font-size:0.8rem; font-weight:600; color:#374151; text-transform:uppercase; letter-spacing:0.04em; }
-  input[type="text"], textarea, select {
-    background:#fff; border:1.5px solid #D1D5DB; border-radius:8px; padding:0.75rem 1rem;
-    color:#111827; font-family:inherit; font-size:0.9rem; outline:none;
-    transition:border-color 0.15s, box-shadow 0.15s; width:100%;
-  }
+  input[type="text"], textarea, select { background:#fff; border:1.5px solid #D1D5DB; border-radius:8px; padding:0.75rem 1rem; color:#111827; font-family:inherit; font-size:0.9rem; outline:none; transition:border-color 0.15s, box-shadow 0.15s; width:100%; }
   textarea { resize:vertical; }
   input:focus, textarea:focus, select:focus { border-color:#22C55E; box-shadow:0 0 0 3px rgba(34,197,94,0.1); }
 </style>

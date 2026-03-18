@@ -1,35 +1,3 @@
-import { defineCollection } from 'astro:content';
-import { glob } from 'astro/loaders';
-import { z } from 'astro/zod';
-
-const blog = defineCollection({
-	loader: glob({ base: './src/content/blog', pattern: '**/*.{md,mdx}' }),
-	schema:
-		z.object({
-			title: z.string(),
-			description: z.string(),
-			pubDate: z.coerce.date(),
-			updatedDate: z.coerce.date().optional(),
-			heroImage: z.string().optional(),
-			tags: z.array(z.string()).optional().default([]),
-			author: z.string().optional(),
-			noindex: z.boolean().optional().default(false),
-		}),
-});
-
-const projects = defineCollection({
-	loader: glob({ base: './src/content/projects', pattern: '**/*.{md,mdx}' }),
-	schema: z.object({
-		title: z.string(),
-		client: z.string(),
-		service: z.string(),
-		tools: z.array(z.string()).default([]),
-		description: z.string(),
-		results: z.string(),
-		heroImage: z.string().optional(),
-		featured: z.boolean().default(false),
-		order: z.number().default(0),
-	}),
-});
-
-export const collections = { blog, projects };
+// Content collections are not used — all data is stored in Neon Postgres.
+// Blog posts and projects are managed via the admin panel (/admin).
+export const collections = {};

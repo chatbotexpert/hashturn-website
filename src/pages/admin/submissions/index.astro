@@ -1,32 +1,13 @@
 ---
 export const prerender = false;
 import AdminLayout from '../../../layouts/AdminLayout.astro';
-import { readJSON } from '../../../utils/data';
+import { sql } from '../../../lib/db';
 
-interface Submission {
-  id: string;
-  name: string;
-  email: string;
-  company?: string;
-  budget?: string;
-  service?: string;
-  message: string;
-  how?: string;
-  source?: string;
-  status: string;
-  submittedAt: string;
-}
-
-const submissions = await readJSON<Submission[]>('submissions.json').catch(() => [] as Submission[]);
-const sorted = [...submissions].sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime());
-
-const newCount = submissions.filter(s => s.status === 'new').length;
+const submissions = await sql`SELECT * FROM submissions ORDER BY submitted_at DESC`.catch(() => []);
+const newCount = (submissions as Record<string, unknown>[]).filter(s => s.status === 'new').length;
 
 const statusColors: Record<string, string> = {
-  new: '#22C55E',
-  read: '#3B82F6',
-  replied: '#8B5CF6',
-  closed: '#9CA3AF',
+  new: '#22C55E', read: '#3B82F6', replied: '#8B5CF6', closed: '#9CA3AF',
 };
 
 function formatDate(iso: string) {
@@ -46,60 +27,58 @@ function formatDate(iso: string) {
       <span class="admin-card__title">Form Submissions ({submissions.length})</span>
     </div>
 
-    {sorted.length === 0 ? (
+    {submissions.length === 0 ? (
       <div style="padding:2rem; text-align:center; color:#9CA3AF;">
         No submissions yet. They'll appear here when visitors fill out the contact or quote forms.
       </div>
     ) : (
       <div style="display:flex; flex-direction:column; gap:0;">
-        {sorted.map(s => (
+        {(submissions as Record<string, unknown>[]).map(s => (
           <div style={`padding:1.25rem 1.5rem; border-bottom:1px solid #F3F4F6; ${s.status === 'new' ? 'background:rgba(34,197,94,0.04);' : ''}`}>
             <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; flex-wrap:wrap;">
               <div>
                 <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.3rem;">
-                  <span style="font-weight:600; font-size:0.95rem;">{s.name}</span>
-                  <span style={`font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:${statusColors[s.status] ?? '#6B7280'}; background:#F3F4F6; padding:0.15rem 0.5rem; border-radius:4px;`}>
-                    {s.status}
+                  <span style="font-weight:600; font-size:0.95rem;">{String(s.name)}</span>
+                  <span style={`font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:${statusColors[String(s.status)] ?? '#6B7280'}; background:#F3F4F6; padding:0.15rem 0.5rem; border-radius:4px;`}>
+                    {String(s.status)}
                   </span>
-                  {s.source && <span style="font-size:0.75rem; color:#9CA3AF;">via {s.source}</span>}
+                  {s.source && <span style="font-size:0.75rem; color:#9CA3AF;">via {String(s.source)}</span>}
                 </div>
                 <div style="display:flex; gap:1.25rem; flex-wrap:wrap; font-size:0.83rem; color:#6B7280; margin-bottom:0.75rem;">
-                  <a href={`mailto:${s.email}`} style="color:#60A5FA;">{s.email}</a>
-                  {s.company && <span>{s.company}</span>}
-                  {s.service && <span>Service: <strong style="color:#374151;">{s.service}</strong></span>}
-                  {s.budget && <span>Budget: <strong style="color:#374151;">{s.budget}</strong></span>}
-                  <span>{formatDate(s.submittedAt)}</span>
+                  <a href={`mailto:${s.email}`} style="color:#60A5FA;">{String(s.email)}</a>
+                  {s.company && <span>{String(s.company)}</span>}
+                  {s.service && <span>Service: <strong style="color:#374151;">{String(s.service)}</strong></span>}
+                  {s.budget && <span>Budget: <strong style="color:#374151;">{String(s.budget)}</strong></span>}
+                  <span>{formatDate(String(s.submitted_at))}</span>
                 </div>
-                <p style="font-size:0.88rem; color:#374151; line-height:1.55; max-width:680px;">{s.message}</p>
-                {s.how && (
-                  <p style="margin-top:0.4rem; font-size:0.78rem; color:#9CA3AF;">How they found us: {s.how}</p>
-                )}
+                <p style="font-size:0.88rem; color:#374151; line-height:1.55; max-width:680px;">{String(s.message)}</p>
+                {s.how && <p style="margin-top:0.4rem; font-size:0.78rem; color:#9CA3AF;">How they found us: {String(s.how)}</p>}
               </div>
               <div style="display:flex; flex-direction:column; gap:0.4rem; flex-shrink:0;">
                 {s.status === 'new' && (
                   <form method="POST" action="/admin/api/submissions/status">
-                    <input type="hidden" name="id" value={s.id} />
+                    <input type="hidden" name="id" value={String(s.id)} />
                     <input type="hidden" name="status" value="read" />
                     <button type="submit" class="btn-admin btn-admin--outline btn-admin--sm">Mark Read</button>
                   </form>
                 )}
                 {s.status === 'read' && (
                   <form method="POST" action="/admin/api/submissions/status">
-                    <input type="hidden" name="id" value={s.id} />
+                    <input type="hidden" name="id" value={String(s.id)} />
                     <input type="hidden" name="status" value="replied" />
                     <button type="submit" class="btn-admin btn-admin--outline btn-admin--sm">Mark Replied</button>
                   </form>
                 )}
                 {(s.status === 'replied' || s.status === 'read') && (
                   <form method="POST" action="/admin/api/submissions/status">
-                    <input type="hidden" name="id" value={s.id} />
+                    <input type="hidden" name="id" value={String(s.id)} />
                     <input type="hidden" name="status" value="closed" />
                     <button type="submit" class="btn-admin btn-admin--ghost btn-admin--sm">Close</button>
                   </form>
                 )}
                 {s.status === 'closed' && (
                   <form method="POST" action="/admin/api/submissions/status">
-                    <input type="hidden" name="id" value={s.id} />
+                    <input type="hidden" name="id" value={String(s.id)} />
                     <input type="hidden" name="status" value="new" />
                     <button type="submit" class="btn-admin btn-admin--ghost btn-admin--sm">Reopen</button>
                   </form>

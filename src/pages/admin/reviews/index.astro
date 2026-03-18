@@ -1,22 +1,9 @@
 ---
 export const prerender = false;
 import AdminLayout from '../../../layouts/AdminLayout.astro';
-import { readJSON } from '../../../utils/data';
+import { sql } from '../../../lib/db';
 
-interface Review {
-  id: string;
-  name: string;
-  location: string;
-  initials: string;
-  rating: number;
-  text: string;
-  source: string;
-  featured: boolean;
-  createdAt: string;
-}
-
-const reviews = await readJSON<Review[]>('reviews.json').catch(() => [] as Review[]);
-const sorted = [...reviews].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+const reviews = await sql`SELECT id, name, location, rating, review_text, source, featured FROM reviews ORDER BY created_at DESC`.catch(() => []);
 ---
 
 <AdminLayout title="Reviews" activeNav="reviews">
@@ -26,7 +13,7 @@ const sorted = [...reviews].sort((a, b) => new Date(b.createdAt).getTime() - new
       <a href="/admin/reviews/new" class="btn-admin btn-admin--green">+ Add Review</a>
     </div>
 
-    {sorted.length === 0 ? (
+    {reviews.length === 0 ? (
       <div style="padding:2rem; text-align:center; color:#9CA3AF;">
         No reviews yet. <a href="/admin/reviews/new" style="color:#22C55E;">Add your first review →</a>
       </div>
@@ -44,28 +31,26 @@ const sorted = [...reviews].sort((a, b) => new Date(b.createdAt).getTime() - new
             </tr>
           </thead>
           <tbody>
-            {sorted.map(r => (
+            {(reviews as Record<string, unknown>[]).map(r => (
               <tr>
                 <td>
-                  <div style="font-weight:500;">{r.name}</div>
-                  <div style="font-size:0.78rem; color:#9CA3AF;">{r.location}</div>
+                  <div style="font-weight:500;">{String(r.name)}</div>
+                  <div style="font-size:0.78rem; color:#9CA3AF;">{String(r.location)}</div>
                 </td>
-                <td style="white-space:nowrap;">{'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}</td>
-                <td style="max-width:280px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#4B5563;">{r.text}</td>
-                <td style="color:#6B7280;">{r.source}</td>
+                <td style="white-space:nowrap;">{'★'.repeat(Number(r.rating))}{'☆'.repeat(5 - Number(r.rating))}</td>
+                <td style="max-width:280px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#4B5563;">{String(r.review_text)}</td>
+                <td style="color:#6B7280;">{String(r.source)}</td>
                 <td>
-                  {r.featured ? (
-                    <span style="color:#22C55E; font-size:0.8rem; font-weight:600;">✓ Yes</span>
-                  ) : (
-                    <span style="color:#9CA3AF; font-size:0.8rem;">No</span>
-                  )}
+                  {r.featured
+                    ? <span style="color:#22C55E; font-size:0.8rem; font-weight:600;">✓ Yes</span>
+                    : <span style="color:#9CA3AF; font-size:0.8rem;">No</span>}
                 </td>
                 <td>
                   <div style="display:flex; gap:0.5rem;">
                     <a href={`/admin/reviews/edit/${r.id}`} class="btn-admin btn-admin--outline btn-admin--sm">Edit</a>
                     <form method="POST" action="/admin/api/reviews" style="display:inline;" onsubmit="return confirm('Delete this review?')">
                       <input type="hidden" name="_action" value="delete" />
-                      <input type="hidden" name="id" value={r.id} />
+                      <input type="hidden" name="id" value={String(r.id)} />
                       <button type="submit" class="btn-admin btn-admin--danger btn-admin--sm">Delete</button>
                     </form>
                   </div>

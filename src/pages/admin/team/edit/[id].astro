@@ -1,29 +1,26 @@
 ---
 export const prerender = false;
 import AdminLayout from '../../../../layouts/AdminLayout.astro';
-import { readJSON } from '../../../../utils/data';
-
-interface TeamMember {
-  id: string;
-  name: string;
-  role: string;
-  bio: string;
-  avatar: string;
-  avatarColor: string;
-  image: string;
-  linkedin: string;
-  order: number;
-}
+import { sql } from '../../../../lib/db';
 
 const { id } = Astro.params;
 if (!id) return Astro.redirect('/admin/team');
 
-const teams = await readJSON<TeamMember[]>('teams.json').catch(() => [] as TeamMember[]);
-const member = teams.find(t => t.id === id);
-if (!member) return Astro.redirect('/admin/team');
+const rows = await sql`SELECT * FROM team_members WHERE id=${id}`.catch(() => []);
+if (!rows.length) return Astro.redirect('/admin/team');
+
+const m = rows[0] as Record<string, unknown>;
+const name = String(m.name ?? '');
+const role = String(m.role ?? '');
+const bio = String(m.bio ?? '');
+const avatar = String(m.avatar ?? '');
+const avatarColor = String(m.avatar_color ?? '#22C55E');
+const image = String(m.image ?? '');
+const linkedin = String(m.linkedin ?? '');
+const order = Number(m.display_order ?? 0);
 ---
 
-<AdminLayout title={`Edit: ${member.name}`} activeNav="team">
+<AdminLayout title={`Edit: ${name}`} activeNav="team">
   <div class="admin-card">
     <div class="admin-card__header">
       <span class="admin-card__title">Edit Team Member</span>
@@ -32,50 +29,50 @@ if (!member) return Astro.redirect('/admin/team');
 
     <form method="POST" action="/admin/api/team" enctype="multipart/form-data" style="padding:1.5rem; display:flex; flex-direction:column; gap:1.25rem;">
       <input type="hidden" name="_action" value="update" />
-      <input type="hidden" name="id" value={member.id} />
-      <input type="hidden" name="order" value={member.order} />
-      <input type="hidden" name="currentImage" value={member.image ?? ''} />
+      <input type="hidden" name="id" value={id} />
+      <input type="hidden" name="order" value={order} />
+      <input type="hidden" name="currentImage" value={image} />
 
       <div class="form-row">
         <div class="form-group">
           <label for="name">Full Name *</label>
-          <input type="text" id="name" name="name" required value={member.name} />
+          <input type="text" id="name" name="name" required value={name} />
         </div>
         <div class="form-group">
           <label for="role">Role / Title *</label>
-          <input type="text" id="role" name="role" required value={member.role} />
+          <input type="text" id="role" name="role" required value={role} />
         </div>
       </div>
 
       <div class="form-group">
         <label for="bio">Bio</label>
-        <textarea id="bio" name="bio" rows="3">{member.bio}</textarea>
+        <textarea id="bio" name="bio" rows="3">{bio}</textarea>
       </div>
 
       <div class="form-group">
         <label for="linkedin">LinkedIn URL</label>
-        <input type="url" id="linkedin" name="linkedin" value={member.linkedin ?? ''} placeholder="https://linkedin.com/in/username" />
+        <input type="url" id="linkedin" name="linkedin" value={linkedin} placeholder="https://linkedin.com/in/username" />
       </div>
 
       <div class="form-group">
         <label for="image">Photo</label>
-        {member.image && (
-          <img src={member.image} alt={member.name} style="width:96px; height:96px; border-radius:50%; object-fit:cover; margin-bottom:0.5rem;" />
+        {image && (
+          <img src={image} alt={name} style="width:96px; height:96px; border-radius:50%; object-fit:cover; margin-bottom:0.5rem;" />
         )}
-        <input type="file" id="image" name="image" accept="image/*" onchange="previewImage(this, 'imgPreview')" />
+        <input type="file" id="image" name="image" accept="image/*" onchange="previewImg(this)" />
         <img id="imgPreview" src="" alt="Preview" style="display:none; margin-top:0.5rem; width:96px; height:96px; border-radius:50%; object-fit:cover;" />
-        <span style="font-size:0.75rem; color:rgba(0,0,0,0.4);">{member.image ? 'Upload a new photo to replace the current one' : 'Optional — JPG, PNG, WebP'}</span>
+        <span style="font-size:0.75rem; color:#9CA3AF;">{image ? 'Upload a new photo to replace the current one' : 'Optional — JPG, PNG, WebP'}</span>
       </div>
 
       <div class="form-row">
         <div class="form-group">
           <label for="avatar">Initials / Avatar Text</label>
-          <input type="text" id="avatar" name="avatar" maxlength="2" value={member.avatar} />
+          <input type="text" id="avatar" name="avatar" maxlength="2" value={avatar} />
         </div>
         <div class="form-group">
           <label for="avatarColor">Avatar Color</label>
           <div style="display:flex; align-items:center; gap:0.75rem;">
-            <input type="color" id="avatarColor" name="avatarColor" value={member.avatarColor} style="width:48px; height:40px; padding:2px; cursor:pointer;" />
+            <input type="color" id="avatarColor" name="avatarColor" value={avatarColor} style="width:48px; height:40px; padding:2px; cursor:pointer;" />
             <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
               {['#22C55E', '#3B82F6', '#EF4444', '#EAB308', '#8B5CF6', '#EC4899', '#F97316'].map(c => (
                 <button type="button" onclick={`document.getElementById('avatarColor').value='${c}'`}
@@ -99,32 +96,19 @@ if (!member) return Astro.redirect('/admin/team');
   @media (max-width:640px) { .form-row { grid-template-columns:1fr; } }
   .form-group { display:flex; flex-direction:column; gap:0.4rem; }
   label { font-size:0.8rem; font-weight:600; color:#374151; text-transform:uppercase; letter-spacing:0.04em; }
-  input[type="text"], input[type="url"], textarea {
-    background:#fff; border:1.5px solid #D1D5DB; border-radius:8px; padding:0.75rem 1rem;
-    color:#111827; font-family:inherit; font-size:0.9rem; outline:none;
-    transition:border-color 0.15s, box-shadow 0.15s; width:100%;
-  }
+  input[type="text"], input[type="url"], textarea { background:#fff; border:1.5px solid #D1D5DB; border-radius:8px; padding:0.75rem 1rem; color:#111827; font-family:inherit; font-size:0.9rem; outline:none; transition:border-color 0.15s, box-shadow 0.15s; width:100%; }
   textarea { resize:vertical; }
   input:focus, textarea:focus { border-color:#22C55E; box-shadow:0 0 0 3px rgba(34,197,94,0.1); }
-  input[type="file"] {
-    background:#fff; border:1.5px dashed #D1D5DB; border-radius:8px; padding:0.6rem 1rem;
-    color:#111827; font-family:inherit; font-size:0.875rem; cursor:pointer; width:100%;
-  }
+  input[type="file"] { background:#fff; border:1.5px dashed #D1D5DB; border-radius:8px; padding:0.6rem 1rem; color:#111827; cursor:pointer; width:100%; }
   input[type="file"]:hover { border-color:#22C55E; }
 </style>
 
-<script>
-  function previewImage(input: HTMLInputElement, previewId: string) {
-    const preview = document.getElementById(previewId) as HTMLImageElement | null;
-    if (!preview) return;
-    if (input.files && input.files[0]) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = (e.target as FileReader).result as string;
-        preview.src = result;
-        preview.style.display = 'block';
-      };
-      reader.readAsDataURL(input.files[0]);
-    }
+<script is:inline>
+  function previewImg(input) {
+    const preview = document.getElementById('imgPreview');
+    if (!preview || !input.files || !input.files[0]) return;
+    const reader = new FileReader();
+    reader.onload = e => { preview.src = e.target.result; preview.style.display = 'block'; };
+    reader.readAsDataURL(input.files[0]);
   }
 </script>

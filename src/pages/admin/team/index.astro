@@ -1,30 +1,19 @@
 ---
 export const prerender = false;
 import AdminLayout from '../../../layouts/AdminLayout.astro';
-import { readJSON } from '../../../utils/data';
+import { sql } from '../../../lib/db';
 
-interface TeamMember {
-  id: string;
-  name: string;
-  role: string;
-  bio: string;
-  avatar: string;
-  avatarColor: string;
-  order: number;
-}
-
-const teams = await readJSON<TeamMember[]>('teams.json').catch(() => [] as TeamMember[]);
-const sorted = [...teams].sort((a, b) => a.order - b.order);
+const members = await sql`SELECT id, name, role, bio, avatar, avatar_color FROM team_members ORDER BY display_order ASC`.catch(() => []);
 ---
 
 <AdminLayout title="Team Members" activeNav="team">
   <div class="admin-card">
     <div class="admin-card__header">
-      <span class="admin-card__title">Team Members ({teams.length})</span>
+      <span class="admin-card__title">Team Members ({members.length})</span>
       <a href="/admin/team/new" class="btn-admin btn-admin--green">+ Add Member</a>
     </div>
 
-    {sorted.length === 0 ? (
+    {members.length === 0 ? (
       <div style="padding:2rem; text-align:center; color:#9CA3AF;">
         No team members yet. <a href="/admin/team/new" style="color:#22C55E;">Add your first member →</a>
       </div>
@@ -40,24 +29,24 @@ const sorted = [...teams].sort((a, b) => a.order - b.order);
             </tr>
           </thead>
           <tbody>
-            {sorted.map(member => (
+            {(members as Record<string, unknown>[]).map(m => (
               <tr>
                 <td>
                   <div style="display:flex; align-items:center; gap:0.75rem;">
-                    <div style={`width:36px; height:36px; border-radius:50%; background:${member.avatarColor}; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.85rem; color:#fff; flex-shrink:0;`}>
-                      {member.avatar || member.name.split(' ').map((n: string) => n[0]).join('').slice(0,2).toUpperCase()}
+                    <div style={`width:36px; height:36px; border-radius:50%; background:${m.avatar_color}; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.85rem; color:#fff; flex-shrink:0;`}>
+                      {String(m.avatar) || String(m.name).split(' ').map((n: string) => n[0]).join('').slice(0,2).toUpperCase()}
                     </div>
-                    <span style="font-weight:500;">{member.name}</span>
+                    <span style="font-weight:500;">{String(m.name)}</span>
                   </div>
                 </td>
-                <td style="color:#4B5563;">{member.role}</td>
-                <td style="color:#6B7280; max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{member.bio}</td>
+                <td style="color:#4B5563;">{String(m.role)}</td>
+                <td style="color:#6B7280; max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{String(m.bio)}</td>
                 <td>
                   <div style="display:flex; gap:0.5rem;">
-                    <a href={`/admin/team/edit/${member.id}`} class="btn-admin btn-admin--outline btn-admin--sm">Edit</a>
+                    <a href={`/admin/team/edit/${m.id}`} class="btn-admin btn-admin--outline btn-admin--sm">Edit</a>
                     <form method="POST" action="/admin/api/team" style="display:inline;" onsubmit="return confirm('Remove this team member?')">
                       <input type="hidden" name="_action" value="delete" />
-                      <input type="hidden" name="id" value={member.id} />
+                      <input type="hidden" name="id" value={String(m.id)} />
                       <button type="submit" class="btn-admin btn-admin--danger btn-admin--sm">Remove</button>
                     </form>
                   </div>

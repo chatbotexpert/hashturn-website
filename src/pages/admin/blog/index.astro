@@ -1,46 +1,9 @@
 ---
 export const prerender = false;
 import AdminLayout from '../../../layouts/AdminLayout.astro';
-import { readdir, readFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { sql } from '../../../lib/db';
 
-interface BlogPost {
-  slug: string;
-  title: string;
-  pubDate: string;
-  tags: string[];
-  ext: string;
-}
-
-const blogDir = join(process.cwd(), 'src', 'content', 'blog');
-let posts: BlogPost[] = [];
-
-try {
-  const files = await readdir(blogDir);
-  const mdFiles = files.filter(f => f.endsWith('.md') || f.endsWith('.mdx'));
-
-  for (const file of mdFiles) {
-    const ext = file.endsWith('.mdx') ? 'mdx' : 'md';
-    const slug = file.replace(/\.(md|mdx)$/, '');
-    const raw = await readFile(join(blogDir, file), 'utf-8');
-
-    const titleMatch = raw.match(/^title:\s*"?([^"\n]+)"?/m);
-    const dateMatch = raw.match(/^pubDate:\s*"?([^"\n]+)"?/m);
-    const tagsMatch = raw.match(/^tags:\s*\[([^\]]*)\]/m);
-
-    const title = titleMatch?.[1]?.trim() ?? slug;
-    const pubDate = dateMatch?.[1]?.trim() ?? '';
-    const tags = tagsMatch?.[1]
-      ? tagsMatch[1].split(',').map(t => t.trim().replace(/^"|"$/g, '')).filter(Boolean)
-      : [];
-
-    posts.push({ slug, title, pubDate, tags, ext });
-  }
-
-  posts.sort((a, b) => (b.pubDate > a.pubDate ? 1 : -1));
-} catch {
-  posts = [];
-}
+const posts = await sql`SELECT slug, title, description, pub_date, author FROM blog_posts ORDER BY pub_date DESC, created_at DESC`.catch(() => []);
 ---
 
 <AdminLayout title="Blog Posts" activeNav="blog">
@@ -52,7 +15,7 @@ try {
 
     {posts.length === 0 ? (
       <div style="padding:2rem; text-align:center; color:#9CA3AF;">
-        No blog posts yet. <a href="/admin/blog/new" style="color:#22C55E;">Create your first post →</a>
+        No posts yet. <a href="/admin/blog/new" style="color:#22C55E;">Write your first post →</a>
       </div>
     ) : (
       <div style="overflow-x:auto;">
@@ -61,26 +24,25 @@ try {
             <tr>
               <th>Title</th>
               <th>Date</th>
-              <th>Tags</th>
+              <th>Author</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {posts.map(post => (
+            {(posts as Record<string, unknown>[]).map(p => (
               <tr>
-                <td style="font-weight:500;">{post.title}</td>
-                <td style="color:#6B7280; white-space:nowrap;">{post.pubDate}</td>
                 <td>
-                  {post.tags.map(tag => (
-                    <span class="tag-badge">{tag}</span>
-                  ))}
+                  <div style="font-weight:500;">{String(p.title)}</div>
+                  <div style="font-size:0.78rem; color:#9CA3AF; max-width:360px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{String(p.description)}</div>
                 </td>
+                <td style="color:#6B7280; white-space:nowrap;">{String(p.pub_date)}</td>
+                <td style="color:#4B5563;">{String(p.author)}</td>
                 <td>
-                  <div style="display:flex; gap:0.5rem; align-items:center;">
-                    <a href={`/admin/blog/edit/${post.slug}`} class="btn-admin btn-admin--outline btn-admin--sm">Edit</a>
-                    <a href={`/blog/${post.slug}`} target="_blank" rel="noopener" class="btn-admin btn-admin--ghost btn-admin--sm">View ↗</a>
+                  <div style="display:flex; gap:0.5rem;">
+                    <a href={`/admin/blog/edit/${p.slug}`} class="btn-admin btn-admin--outline btn-admin--sm">Edit</a>
+                    <a href={`/blog/${p.slug}/`} target="_blank" class="btn-admin btn-admin--outline btn-admin--sm">View ↗</a>
                     <form method="POST" action="/admin/api/blog/delete" style="display:inline;" onsubmit="return confirm('Delete this post?')">
-                      <input type="hidden" name="slug" value={post.slug} />
+                      <input type="hidden" name="slug" value={String(p.slug)} />
                       <button type="submit" class="btn-admin btn-admin--danger btn-admin--sm">Delete</button>
                     </form>
                   </div>

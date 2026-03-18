@@ -1,0 +1,79 @@
+---
+export const prerender = false;
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { readJSON } from '../../utils/data';
+import { readdir } from 'node:fs/promises';
+import { join } from 'node:path';
+
+const blogDir = join(process.cwd(), 'src', 'content', 'blog');
+let blogCount = 0;
+try {
+  const files = await readdir(blogDir);
+  blogCount = files.filter(f => f.endsWith('.md') || f.endsWith('.mdx')).length;
+} catch { blogCount = 0; }
+
+const projectsDir = join(process.cwd(), 'src', 'content', 'projects');
+let projectCount = 0;
+try {
+  const files = await readdir(projectsDir);
+  projectCount = files.filter(f => f.endsWith('.md') || f.endsWith('.mdx')).length;
+} catch { projectCount = 0; }
+
+interface TeamMember { id: string; }
+interface Review { id: string; }
+interface Submission { id: string; status: string; }
+
+const teams = await readJSON<TeamMember[]>('teams.json').catch(() => []);
+const reviews = await readJSON<Review[]>('reviews.json').catch(() => []);
+const submissions = await readJSON<Submission[]>('submissions.json').catch(() => []);
+const newSubmissions = submissions.filter(s => s.status === 'new').length;
+---
+
+<AdminLayout title="Dashboard" activeNav="dashboard">
+  <div class="stat-cards">
+    <div class="stat-card">
+      <div class="stat-card__label">Blog Posts</div>
+      <div class="stat-card__value">{blogCount}</div>
+      <div class="stat-card__sub"><a href="/admin/blog" style="color:#22C55E;">Manage →</a></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card__label">Team Members</div>
+      <div class="stat-card__value">{teams.length}</div>
+      <div class="stat-card__sub"><a href="/admin/team" style="color:#22C55E;">Manage →</a></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card__label">Reviews</div>
+      <div class="stat-card__value">{reviews.length}</div>
+      <div class="stat-card__sub"><a href="/admin/reviews" style="color:#22C55E;">Manage →</a></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card__label">Projects</div>
+      <div class="stat-card__value">{projectCount}</div>
+      <div class="stat-card__sub"><a href="/admin/projects" style="color:#22C55E;">Manage →</a></div>
+    </div>
+    <div class={`stat-card${newSubmissions > 0 ? ' stat-card--green' : ''}`}>
+      <div class="stat-card__label">New Submissions</div>
+      <div class="stat-card__value">{newSubmissions}</div>
+      <div class="stat-card__sub"><a href="/admin/submissions" style="color:#22C55E;">View →</a></div>
+    </div>
+  </div>
+
+  <div class="admin-card">
+    <div class="admin-card__header">
+      <span class="admin-card__title">Quick Actions</span>
+    </div>
+    <div style="padding:1.5rem; display:flex; gap:1rem; flex-wrap:wrap;">
+      <a href="/admin/blog/new" class="btn-admin btn-admin--green">+ New Blog Post</a>
+      <a href="/admin/team/new" class="btn-admin btn-admin--outline">+ Add Team Member</a>
+      <a href="/admin/reviews/new" class="btn-admin btn-admin--outline">+ Add Review</a>
+      <a href="/admin/projects/new" class="btn-admin btn-admin--outline">+ Add Project</a>
+      <a href="/admin/submissions" class="btn-admin btn-admin--outline">View Submissions</a>
+    </div>
+  </div>
+
+  <div style="margin-top:1.5rem; padding:1rem 1.25rem; background:#FEF3C7; border:1px solid #FDE68A; border-radius:8px; font-size:0.85rem; color:#92400E;">
+    <strong>&#128161; Note:</strong> After creating or editing blog posts in the admin panel, run
+    <code style="background:rgba(0,0,0,0.08); padding:0.1rem 0.4rem; border-radius:4px;">npm run build</code>
+    to publish changes to the live website.
+  </div>
+</AdminLayout>

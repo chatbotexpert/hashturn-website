@@ -1,0 +1,360 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="Get a Free Quote — HashTurn Automation"
+  description="Tell us about your project and get a free custom quote. We'll assess your automation needs and provide a clear plan with timeline and pricing."
+>
+  <section class="page-hero">
+    <div class="container text-center">
+      <p class="section-label">Free Quote</p>
+      <h1 style="color:var(--white);">Get a Custom Quote<br /><span style="color:var(--green);">in 24 Hours</span></h1>
+      <p style="color:rgba(255,255,255,0.6); max-width:480px; margin:0.75rem auto 0; font-size:1.05rem;">
+        Tell us what you need automated and we'll send you a clear plan, timeline, and fixed price — no obligation.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="quote-layout">
+
+        <div class="quote-form-wrap">
+          <h2 style="font-size:1.3rem; margin-bottom:0.5rem;">Project Details</h2>
+          <p style="color:var(--gray-500); font-size:0.9rem; margin-bottom:2rem;">
+            The more detail you provide, the more accurate your quote will be.
+          </p>
+
+          <form class="quote-form" id="quote-form" novalidate>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="name">Your Name <span class="req">*</span></label>
+                <input type="text" id="name" name="name" placeholder="John Smith" required />
+              </div>
+              <div class="form-group">
+                <label for="email">Email Address <span class="req">*</span></label>
+                <input type="email" id="email" name="email" placeholder="john@company.com" required />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="company">Company Name</label>
+                <input type="text" id="company" name="company" placeholder="Acme Corp" />
+              </div>
+              <div class="form-group">
+                <label for="budget">Estimated Budget</label>
+                <select id="budget" name="budget">
+                  <option value="">Select a range</option>
+                  <option value="under-500">Under $500</option>
+                  <option value="500-2000">$500 – $2,000</option>
+                  <option value="2000-5000">$2,000 – $5,000</option>
+                  <option value="5000-plus">$5,000+</option>
+                  <option value="not-sure">Not sure yet</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="service">Service Type <span class="req">*</span></label>
+              <select id="service" name="service" required>
+                <option value="">Select a service</option>
+                <option value="bpa">Business Process Automation</option>
+                <option value="rpa">Robotic Process Automation (RPA)</option>
+                <option value="api">API &amp; Webhook Integration</option>
+                <option value="crm">CRM Automation</option>
+                <option value="microsoft">Microsoft 365 Solutions</option>
+                <option value="dev">Mobile &amp; Web Development</option>
+                <option value="other">Other / Multiple Services</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="tools">Tools/Apps Involved</label>
+              <input type="text" id="tools" name="tools" placeholder="e.g. HubSpot, QuickBooks, Google Sheets, Shopify..." />
+            </div>
+
+            <div class="form-group">
+              <label for="message">Describe Your Project <span class="req">*</span></label>
+              <textarea
+                id="message"
+                name="message"
+                rows="6"
+                placeholder="What process do you want to automate? What apps are involved? What does the current manual process look like? What would the ideal automated version do?"
+                required
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="timeline">Desired Timeline</label>
+              <select id="timeline" name="timeline">
+                <option value="">Select a timeline</option>
+                <option value="asap">As soon as possible</option>
+                <option value="1-2-weeks">1–2 weeks</option>
+                <option value="1-month">Within a month</option>
+                <option value="flexible">Flexible</option>
+              </select>
+            </div>
+
+            <input type="hidden" name="source" value="quote" />
+
+            <button type="submit" class="btn btn--green btn--lg" style="width:100%; justify-content:center;">
+              Submit Quote Request &rarr;
+            </button>
+
+            <p class="form-note">
+              &#128274; We respond within 24 hours. No spam, no pressure.
+            </p>
+          </form>
+
+          <div class="form-success" id="form-success" style="display:none;">
+            <div class="success-icon">&#10003;</div>
+            <h3>Quote Request Received!</h3>
+            <p>Thank you! We'll review your project and send you a detailed quote within 24 hours.</p>
+            <a href="/" class="btn btn--outline-dark" style="margin-top:1rem;">Back to Home</a>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="quote-sidebar">
+          <div class="sidebar-card">
+            <h3>What's Included in Your Quote</h3>
+            <ul class="sidebar-list">
+              <li>&#9989; Detailed scope of work</li>
+              <li>&#9989; Fixed price (no hidden fees)</li>
+              <li>&#9989; Clear delivery timeline</li>
+              <li>&#9989; Technology recommendations</li>
+              <li>&#9989; Estimated hours saved per month</li>
+            </ul>
+          </div>
+
+          <div class="sidebar-card">
+            <h3>Prefer a Call?</h3>
+            <p style="font-size:0.9rem; color:var(--gray-500); margin-bottom:1.25rem;">
+              Schedule a free 30-minute strategy call and we'll discuss your project live.
+            </p>
+            <a href="/contact" class="btn btn--green" style="width:100%; justify-content:center;" data-calendly="true">
+              Book Free Call
+            </a>
+          </div>
+
+          <div class="sidebar-card sidebar-card--dark">
+            <h3 style="color:var(--white);">Why HashTurn?</h3>
+            <ul class="sidebar-list-dark">
+              <li>&#11088; 5-star rated — 200+ Fiverr reviews</li>
+              <li>&#9889; Most projects start within 48 hours</li>
+              <li>&#128176; Fixed pricing, no surprises</li>
+              <li>&#127760; Serving clients in 20+ countries</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  const form = document.getElementById('quote-form') as HTMLFormElement;
+  const successMsg = document.getElementById('form-success');
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+    const original = btn.innerHTML;
+    btn.innerHTML = 'Sending...';
+    btn.disabled = true;
+
+    try {
+      const data = new FormData(form);
+      const res = await fetch('/api/submit', { method: 'POST', body: data });
+      if (res.ok) {
+        form.style.display = 'none';
+        if (successMsg) successMsg.style.display = 'block';
+      } else {
+        btn.innerHTML = original;
+        btn.disabled = false;
+        alert('Something went wrong. Please try again or email us directly.');
+      }
+    } catch {
+      btn.innerHTML = original;
+      btn.disabled = false;
+      alert('Something went wrong. Please try again or email us directly.');
+    }
+  });
+</script>
+
+<style>
+  .page-hero {
+    background: var(--black);
+    padding: 4rem 1.5rem 5rem;
+  }
+
+  .quote-layout {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .quote-form-wrap {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--r-lg);
+    padding: 2.5rem;
+    box-shadow: var(--shadow-md);
+  }
+
+  .quote-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .form-group label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--gray-700);
+  }
+
+  .req { color: #EF4444; }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--r-sm);
+    padding: 0.75rem 1rem;
+    font-family: var(--font);
+    font-size: 0.92rem;
+    color: var(--gray-900);
+    background: var(--white);
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    width: 100%;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(34,197,94,0.12);
+  }
+
+  .form-group textarea {
+    resize: vertical;
+    min-height: 140px;
+  }
+
+  .form-note {
+    font-size: 0.82rem;
+    color: var(--gray-400);
+    text-align: center;
+    margin: 0;
+  }
+
+  /* Success */
+  .form-success {
+    text-align: center;
+    padding: 3rem 2rem;
+  }
+
+  .success-icon {
+    width: 64px;
+    height: 64px;
+    background: var(--green-light);
+    color: var(--green-dark);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0 auto 1.25rem;
+  }
+
+  .form-success h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .form-success p {
+    color: var(--gray-500);
+    margin-bottom: 0;
+  }
+
+  /* Sidebar */
+  .quote-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .sidebar-card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--r);
+    padding: 1.75rem;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .sidebar-card--dark {
+    background: var(--black);
+    border-color: var(--black);
+  }
+
+  .sidebar-card h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--gray-900);
+  }
+
+  .sidebar-list {
+    list-style: none;
+    padding: 0; margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .sidebar-list li {
+    font-size: 0.9rem;
+    color: var(--gray-700);
+  }
+
+  .sidebar-list-dark {
+    list-style: none;
+    padding: 0; margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .sidebar-list-dark li {
+    font-size: 0.88rem;
+    color: rgba(255,255,255,0.7);
+  }
+
+  @media (max-width: 900px) {
+    .quote-layout { grid-template-columns: 1fr; }
+    .quote-sidebar { order: -1; }
+  }
+
+  @media (max-width: 600px) {
+    .form-row { grid-template-columns: 1fr; }
+    .quote-form-wrap { padding: 1.5rem; }
+  }
+</style>

@@ -1,0 +1,95 @@
+---
+export const prerender = false;
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { readdir, readFile } from 'node:fs/promises';
+import { join } from 'node:path';
+
+interface BlogPost {
+  slug: string;
+  title: string;
+  pubDate: string;
+  tags: string[];
+  ext: string;
+}
+
+const blogDir = join(process.cwd(), 'src', 'content', 'blog');
+let posts: BlogPost[] = [];
+
+try {
+  const files = await readdir(blogDir);
+  const mdFiles = files.filter(f => f.endsWith('.md') || f.endsWith('.mdx'));
+
+  for (const file of mdFiles) {
+    const ext = file.endsWith('.mdx') ? 'mdx' : 'md';
+    const slug = file.replace(/\.(md|mdx)$/, '');
+    const raw = await readFile(join(blogDir, file), 'utf-8');
+
+    const titleMatch = raw.match(/^title:\s*"?([^"\n]+)"?/m);
+    const dateMatch = raw.match(/^pubDate:\s*"?([^"\n]+)"?/m);
+    const tagsMatch = raw.match(/^tags:\s*\[([^\]]*)\]/m);
+
+    const title = titleMatch?.[1]?.trim() ?? slug;
+    const pubDate = dateMatch?.[1]?.trim() ?? '';
+    const tags = tagsMatch?.[1]
+      ? tagsMatch[1].split(',').map(t => t.trim().replace(/^"|"$/g, '')).filter(Boolean)
+      : [];
+
+    posts.push({ slug, title, pubDate, tags, ext });
+  }
+
+  posts.sort((a, b) => (b.pubDate > a.pubDate ? 1 : -1));
+} catch {
+  posts = [];
+}
+---
+
+<AdminLayout title="Blog Posts" activeNav="blog">
+  <div class="admin-card">
+    <div class="admin-card__header">
+      <span class="admin-card__title">Blog Posts ({posts.length})</span>
+      <a href="/admin/blog/new" class="btn-admin btn-admin--green">+ New Post</a>
+    </div>
+
+    {posts.length === 0 ? (
+      <div style="padding:2rem; text-align:center; color:#9CA3AF;">
+        No blog posts yet. <a href="/admin/blog/new" style="color:#22C55E;">Create your first post →</a>
+      </div>
+    ) : (
+      <div style="overflow-x:auto;">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Date</th>
+              <th>Tags</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {posts.map(post => (
+              <tr>
+                <td style="font-weight:500;">{post.title}</td>
+                <td style="color:#6B7280; white-space:nowrap;">{post.pubDate}</td>
+                <td>
+                  {post.tags.map(tag => (
+                    <span class="tag-badge">{tag}</span>
+                  ))}
+                </td>
+                <td>
+                  <div style="display:flex; gap:0.5rem; align-items:center;">
+                    <a href={`/admin/blog/edit/${post.slug}`} class="btn-admin btn-admin--outline btn-admin--sm">Edit</a>
+                    <a href={`/blog/${post.slug}`} target="_blank" rel="noopener" class="btn-admin btn-admin--ghost btn-admin--sm">View ↗</a>
+                    <form method="POST" action="/admin/api/blog/delete" style="display:inline;" onsubmit="return confirm('Delete this post?')">
+                      <input type="hidden" name="slug" value={post.slug} />
+                      <button type="submit" class="btn-admin btn-admin--danger btn-admin--sm">Delete</button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+  </div>
+</AdminLayout>

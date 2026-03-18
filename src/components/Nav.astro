@@ -1,0 +1,275 @@
+---
+const links = [
+  { label: 'Services', href: '/services' },
+  { label: 'Work', href: '/work' },
+  { label: 'Pricing', href: '/pricing' },
+  { label: 'About', href: '/about' },
+  { label: 'Blog', href: '/blog' },
+  { label: 'Contact', href: '/contact' },
+];
+
+const pathname = Astro.url.pathname;
+---
+
+<header class="nav" id="nav">
+  <div class="nav__inner">
+    <!-- Logo -->
+    <a href="/" class="nav__logo" aria-label="HashTurn Home">
+      <span class="logo__mark" aria-hidden="true">
+        <span class="lm-r"></span>
+        <span class="lm-g"></span>
+        <span class="lm-y"></span>
+        <span class="lm-b"></span>
+      </span>
+      <span class="logo__text">HASHTURN</span>
+    </a>
+
+    <!-- Desktop Links -->
+    <nav class="nav__links" aria-label="Main navigation">
+      {links.map(link => (
+        <a
+          href={link.href}
+          class={`nav__link${pathname.startsWith(link.href) ? ' nav__link--active' : ''}`}
+        >
+          {link.label}
+        </a>
+      ))}
+    </nav>
+
+    <!-- CTA -->
+    <a href="/contact" class="btn btn--green nav__cta">Get Free Quote</a>
+
+    <!-- Hamburger -->
+    <button class="nav__hamburger" id="hamburger" aria-label="Toggle mobile menu" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div class="nav__mobile" id="mobile-menu" aria-hidden="true">
+    {links.map(link => (
+      <a href={link.href} class="nav__mobile-link">{link.label}</a>
+    ))}
+    <a href="/contact" class="btn btn--green" style="margin-top:1rem;justify-content:center;">Get Free Quote</a>
+  </div>
+</header>
+
+<!-- Spacer to offset fixed nav -->
+<div style={`height: var(--nav-h)`}></div>
+
+<script>
+  const nav = document.getElementById('nav');
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  // Sticky scroll effect
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 20) {
+      nav?.classList.add('nav--scrolled');
+    } else {
+      nav?.classList.remove('nav--scrolled');
+    }
+  });
+
+  // Mobile menu toggle
+  hamburger?.addEventListener('click', () => {
+    const isOpen = mobileMenu?.classList.toggle('nav__mobile--open');
+    hamburger.setAttribute('aria-expanded', String(isOpen));
+    mobileMenu?.setAttribute('aria-hidden', String(!isOpen));
+    hamburger.classList.toggle('is-open', isOpen);
+  });
+</script>
+
+<style>
+  .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: var(--black);
+    transition: box-shadow 0.2s;
+  }
+
+  .nav--scrolled {
+    box-shadow: 0 2px 20px rgba(0,0,0,0.4);
+  }
+
+  .nav__inner {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    height: var(--nav-h);
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  /* Logo */
+  .nav__logo {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  .logo__mark {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    width: 28px;
+    height: 28px;
+    gap: 2px;
+    position: relative;
+  }
+
+  /* Simplified colorful block logo mark */
+  .logo__mark {
+    width: 30px;
+    height: 30px;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .logo__mark span {
+    position: absolute;
+    border-radius: 2px;
+  }
+
+  /* Vertical bars */
+  .lm-r {
+    width: 7px; height: 22px;
+    background: #EF4444;
+    left: 5px; top: 4px;
+    z-index: 2;
+  }
+  .lm-y {
+    width: 7px; height: 22px;
+    background: #EAB308;
+    left: 18px; top: 4px;
+    z-index: 2;
+  }
+  /* Horizontal bars */
+  .lm-g {
+    width: 26px; height: 7px;
+    background: #22C55E;
+    left: 2px; top: 6px;
+    z-index: 1;
+  }
+  .lm-b {
+    width: 26px; height: 7px;
+    background: #3B82F6;
+    left: 2px; top: 17px;
+    z-index: 1;
+  }
+
+  .logo__text {
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--white);
+  }
+
+  /* Nav Links */
+  .nav__links {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-left: auto;
+  }
+
+  .nav__link {
+    padding: 0.5rem 0.85rem;
+    color: rgba(255,255,255,0.75);
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: var(--r-sm);
+    transition: color 0.15s, background 0.15s;
+    text-decoration: none;
+  }
+
+  .nav__link:hover,
+  .nav__link--active {
+    color: var(--white);
+    background: rgba(255,255,255,0.08);
+  }
+
+  /* CTA */
+  .nav__cta {
+    margin-left: 0.75rem;
+    padding: 0.6rem 1.25rem;
+    font-size: 0.88rem;
+    flex-shrink: 0;
+  }
+
+  /* Hamburger */
+  .nav__hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-left: auto;
+  }
+
+  .nav__hamburger span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: var(--white);
+    border-radius: 2px;
+    transition: all 0.25s;
+    transform-origin: center;
+  }
+
+  .nav__hamburger.is-open span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+  .nav__hamburger.is-open span:nth-child(2) {
+    opacity: 0;
+  }
+  .nav__hamburger.is-open span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  /* Mobile Menu */
+  .nav__mobile {
+    display: none;
+    flex-direction: column;
+    padding: 1rem 1.5rem 1.5rem;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    background: var(--black);
+  }
+
+  .nav__mobile--open {
+    display: flex;
+  }
+
+  .nav__mobile-link {
+    padding: 0.8rem 0;
+    color: rgba(255,255,255,0.8);
+    font-size: 1rem;
+    font-weight: 500;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .nav__mobile-link:hover {
+    color: var(--white);
+  }
+
+  @media (max-width: 768px) {
+    .nav__links { display: none; }
+    .nav__cta { display: none; }
+    .nav__hamburger { display: flex; }
+  }
+</style>

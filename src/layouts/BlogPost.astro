@@ -1,0 +1,169 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import BaseHead from '../components/BaseHead.astro';
+import CalendlyPopup from '../components/CalendlyPopup.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+import Nav from '../components/Nav.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+
+type Props = CollectionEntry<'blog'>['data'];
+
+const { title, description, pubDate, updatedDate, heroImage, tags, noindex } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead
+      title={title}
+      description={description}
+      image={heroImage}
+      type="article"
+      publishedTime={pubDate.toISOString()}
+      modifiedTime={updatedDate?.toISOString()}
+      tags={tags}
+      noindex={noindex}
+    />
+  </head>
+  <body>
+    <Nav />
+    <main class="blog-post-main">
+      <article>
+        {heroImage && heroImage.startsWith('/') && (
+          <div class="hero-image">
+            <img src={heroImage} alt="" />
+          </div>
+        )}
+        <div class="prose">
+          <div class="post-title">
+            <div class="post-date">
+              <FormattedDate date={pubDate} />
+              {updatedDate && (
+                <span class="updated-on">
+                  &nbsp;&middot;&nbsp; Updated <FormattedDate date={updatedDate} />
+                </span>
+              )}
+            </div>
+            <h1>{title}</h1>
+            {tags && tags.length > 0 && (
+              <div class="post-tags">
+                {tags.map((tag) => <span class="tag">{tag}</span>)}
+              </div>
+            )}
+            <hr />
+          </div>
+          <slot />
+        </div>
+      </article>
+
+      <div class="blog-cta container">
+        <p>Want to automate your business? <a href="/contact" data-calendly="true" class="btn btn--green">Book a Free Strategy Call</a></p>
+      </div>
+    </main>
+    <SiteFooter />
+    <CalendlyPopup />
+  </body>
+</html>
+
+<style>
+  .blog-post-main {
+    min-height: 60vh;
+  }
+
+  .hero-image {
+    width: 100%;
+    max-height: 480px;
+    overflow: hidden;
+  }
+
+  .hero-image img {
+    width: 100%;
+    height: 480px;
+    object-fit: cover;
+    border-radius: 0;
+    display: block;
+    margin: 0;
+  }
+
+  .prose {
+    width: 720px;
+    max-width: calc(100% - 2rem);
+    margin: 0 auto;
+    padding: 2rem 1rem 3rem;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--gray-700);
+  }
+
+  .post-title {
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .post-title h1 {
+    font-size: clamp(1.7rem, 4vw, 2.5rem);
+    margin: 0.5rem 0 1rem;
+    color: var(--gray-900);
+  }
+
+  .post-date {
+    font-size: 0.88rem;
+    color: var(--gray-400);
+    margin-bottom: 0.5rem;
+  }
+
+  .updated-on {
+    font-style: italic;
+  }
+
+  .post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 0.75rem 0;
+  }
+
+  .tag {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--green-dark);
+    background: var(--green-light);
+    padding: 0.25rem 0.75rem;
+    border-radius: 50px;
+  }
+
+  .prose hr {
+    border-color: var(--gray-200);
+    margin: 1.5rem 0;
+  }
+
+  /* Blog content typography */
+  .prose :global(h2) { margin-top: 2rem; margin-bottom: 0.75rem; }
+  .prose :global(h3) { margin-top: 1.5rem; margin-bottom: 0.5rem; }
+  .prose :global(p) { margin-bottom: 1.25rem; }
+  .prose :global(ul), .prose :global(ol) { padding-left: 1.5rem; margin-bottom: 1.25rem; }
+  .prose :global(li) { margin-bottom: 0.4rem; }
+  .prose :global(a) { color: var(--green-dark); text-decoration: underline; }
+  .prose :global(blockquote) { margin: 1.5rem 0; }
+  .prose :global(img) { border-radius: var(--r); margin: 1.5rem auto; }
+
+  /* CTA strip */
+  .blog-cta {
+    padding: 2.5rem 1.5rem;
+    background: var(--gray-50);
+    border-top: 1px solid var(--gray-200);
+    text-align: center;
+  }
+
+  .blog-cta p {
+    font-size: 1.05rem;
+    color: var(--gray-600);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin: 0;
+  }
+</style>

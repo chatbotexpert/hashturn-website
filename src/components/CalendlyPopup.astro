@@ -1,0 +1,27 @@
+<!-- Calendly popup widget -->
+<link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet" />
+<script is:inline src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
+
+<script>
+  function initCalendly() {
+    document.querySelectorAll('[data-calendly]').forEach((el) => {
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        // @ts-ignore
+        if (typeof Calendly !== 'undefined') {
+          // @ts-ignore
+          Calendly.initPopupWidget({ url: 'https://calendly.com/hashturns/30min' });
+        } else {
+          // Fallback: open directly
+          window.open('https://calendly.com/hashturns/30min', '_blank');
+        }
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCalendly);
+  } else {
+    initCalendly();
+  }
+</script>

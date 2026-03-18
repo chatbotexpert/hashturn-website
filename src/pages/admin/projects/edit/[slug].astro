@@ -1,0 +1,180 @@
+---
+export const prerender = false;
+import AdminLayout from '../../../../layouts/AdminLayout.astro';
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
+
+const { slug } = Astro.params;
+if (!slug) return Astro.redirect('/admin/projects');
+
+const projectsDir = join(process.cwd(), 'src', 'content', 'projects');
+
+let title = '';
+let client = '';
+let service = 'Business Process Automation';
+let toolsStr = '';
+let description = '';
+let results = '';
+let featured = false;
+let order = 0;
+let heroImage = '';
+let content = '';
+let notFound = false;
+
+try {
+  const raw = await readFile(join(projectsDir, `${slug}.md`), 'utf-8');
+  const fmMatch = raw.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
+  if (fmMatch) {
+    const fm = fmMatch[1];
+    content = fmMatch[2].trim();
+
+    const get = (key: string) => fm.match(new RegExp(`^${key}:\\s*"?([^"\\n]+)"?`, 'm'))?.[1]?.trim() ?? '';
+    const toolsMatch = fm.match(/^tools:\s*\[([^\]]*)\]/m);
+    const toolsArray = toolsMatch?.[1]
+      ? toolsMatch[1].split(',').map(t => t.trim().replace(/^"|"$/g, '')).filter(Boolean)
+      : [];
+
+    title = get('title');
+    client = get('client');
+    service = get('service') || service;
+    toolsStr = toolsArray.join(', ');
+    description = get('description');
+    results = get('results');
+    featured = fm.includes('featured: true');
+    order = parseInt(get('order') || '0', 10);
+    heroImage = get('heroImage');
+  }
+} catch {
+  notFound = true;
+}
+
+if (notFound) return Astro.redirect('/admin/projects');
+---
+
+<AdminLayout title={`Edit: ${title}`} activeNav="projects">
+  <div class="admin-card">
+    <div class="admin-card__header">
+      <span class="admin-card__title">Edit Project</span>
+      <div style="display:flex; gap:0.75rem;">
+        <a href={`/work/${slug}/`} target="_blank" class="btn-admin btn-admin--outline">View ↗</a>
+        <a href="/admin/projects" class="btn-admin btn-admin--outline">← Back</a>
+      </div>
+    </div>
+
+    <form method="POST" action="/admin/api/projects/update" enctype="multipart/form-data" style="padding:1.5rem; display:flex; flex-direction:column; gap:1.25rem;">
+      <input type="hidden" name="slug" value={slug} />
+      <input type="hidden" name="currentHeroImage" value={heroImage} />
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="title">Project Title *</label>
+          <input type="text" id="title" name="title" required value={title} />
+        </div>
+        <div class="form-group">
+          <label for="client">Client Name</label>
+          <input type="text" id="client" name="client" value={client} />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="service">Service Type</label>
+          <select id="service" name="service">
+            <option value="Business Process Automation" selected={service === 'Business Process Automation'}>Business Process Automation</option>
+            <option value="RPA" selected={service === 'RPA'}>RPA</option>
+            <option value="API &amp; Webhook Integration" selected={service === 'API & Webhook Integration'}>API &amp; Webhook Integration</option>
+            <option value="CRM Automation" selected={service === 'CRM Automation'}>CRM Automation</option>
+            <option value="Microsoft 365 Solutions" selected={service === 'Microsoft 365 Solutions'}>Microsoft 365 Solutions</option>
+            <option value="Mobile &amp; Web Development" selected={service === 'Mobile & Web Development'}>Mobile &amp; Web Development</option>
+            <option value="Other" selected={service === 'Other'}>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="tools">Tools Used <span style="color:#9CA3AF; font-weight:400;">(comma-separated)</span></label>
+          <input type="text" id="tools" name="tools" value={toolsStr} />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="description">Short Description</label>
+          <textarea id="description" name="description" rows="3">{description}</textarea>
+        </div>
+        <div class="form-group">
+          <label for="results">Results / Outcomes</label>
+          <textarea id="results" name="results" rows="3">{results}</textarea>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="order">Display Order</label>
+          <input type="number" id="order" name="order" value={order} min="0" />
+        </div>
+        <div class="form-group" style="justify-content:flex-end; padding-bottom:0.25rem;">
+          <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; text-transform:none; letter-spacing:0; font-size:0.9rem;">
+            <input type="checkbox" name="featured" style="width:auto; accent-color:#22C55E;" checked={featured} />
+            Show on homepage (featured)
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="heroImage">Hero Image</label>
+        {heroImage && heroImage.startsWith('/') && (
+          <img src={heroImage} alt="Current hero" style="max-height:180px; border-radius:8px; object-fit:cover; margin-bottom:0.5rem;" />
+        )}
+        <input type="file" id="heroImage" name="heroImage" accept="image/*" onchange="previewImage(this, 'imgPreview')" />
+        <img id="imgPreview" src="" alt="Preview" style="display:none; margin-top:0.5rem; max-height:200px; border-radius:8px; object-fit:cover;" />
+        <span style="font-size:0.75rem; color:#9CA3AF;">{heroImage ? 'Upload a new image to replace the current one' : 'Optional. Accepted: JPG, PNG, WebP'}</span>
+      </div>
+
+      <div class="form-group">
+        <label for="content">Project Content <span style="color:#9CA3AF; font-weight:400;">(Markdown)</span></label>
+        <textarea id="content" name="content" rows="24">{content}</textarea>
+      </div>
+
+      <div style="display:flex; gap:1rem;">
+        <button type="submit" class="btn-admin btn-admin--green">Save Changes</button>
+        <a href="/admin/projects" class="btn-admin btn-admin--outline">Cancel</a>
+      </div>
+    </form>
+  </div>
+</AdminLayout>
+
+<style>
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; }
+  @media (max-width:640px) { .form-row { grid-template-columns:1fr; } }
+  .form-group { display:flex; flex-direction:column; gap:0.4rem; }
+  label { font-size:0.8rem; font-weight:600; color:#374151; text-transform:uppercase; letter-spacing:0.04em; }
+  input[type="text"], input[type="number"], textarea, select {
+    background:#fff; border:1.5px solid #D1D5DB; border-radius:8px; padding:0.75rem 1rem;
+    color:#111827; font-family:inherit; font-size:0.9rem; outline:none;
+    transition:border-color 0.15s, box-shadow 0.15s; width:100%;
+  }
+  textarea { resize:vertical; }
+  textarea#content { font-family:'Courier New', monospace; font-size:0.85rem; line-height:1.6; }
+  input:focus, textarea:focus, select:focus { border-color:#22C55E; box-shadow:0 0 0 3px rgba(34,197,94,0.1); }
+  input::placeholder, textarea::placeholder { color:#9CA3AF; }
+  input[type="file"] {
+    background:#fff; border:1.5px dashed #D1D5DB; border-radius:8px; padding:0.6rem 1rem;
+    color:#111827; cursor:pointer;
+  }
+  input[type="file"]:hover { border-color:#22C55E; }
+</style>
+
+<script>
+  function previewImage(input: HTMLInputElement, previewId: string) {
+    const preview = document.getElementById(previewId) as HTMLImageElement | null;
+    if (!preview) return;
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = (e.target as FileReader).result as string;
+        preview.src = result;
+        preview.style.display = 'block';
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+</script>

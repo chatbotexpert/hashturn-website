@@ -1,0 +1,80 @@
+---
+export const prerender = false;
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { readJSON } from '../../../utils/data';
+
+interface Review {
+  id: string;
+  name: string;
+  location: string;
+  initials: string;
+  rating: number;
+  text: string;
+  source: string;
+  featured: boolean;
+  createdAt: string;
+}
+
+const reviews = await readJSON<Review[]>('reviews.json').catch(() => [] as Review[]);
+const sorted = [...reviews].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+---
+
+<AdminLayout title="Reviews" activeNav="reviews">
+  <div class="admin-card">
+    <div class="admin-card__header">
+      <span class="admin-card__title">Reviews ({reviews.length})</span>
+      <a href="/admin/reviews/new" class="btn-admin btn-admin--green">+ Add Review</a>
+    </div>
+
+    {sorted.length === 0 ? (
+      <div style="padding:2rem; text-align:center; color:#9CA3AF;">
+        No reviews yet. <a href="/admin/reviews/new" style="color:#22C55E;">Add your first review →</a>
+      </div>
+    ) : (
+      <div style="overflow-x:auto;">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Rating</th>
+              <th>Review</th>
+              <th>Source</th>
+              <th>Featured</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sorted.map(r => (
+              <tr>
+                <td>
+                  <div style="font-weight:500;">{r.name}</div>
+                  <div style="font-size:0.78rem; color:#9CA3AF;">{r.location}</div>
+                </td>
+                <td style="white-space:nowrap;">{'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}</td>
+                <td style="max-width:280px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#4B5563;">{r.text}</td>
+                <td style="color:#6B7280;">{r.source}</td>
+                <td>
+                  {r.featured ? (
+                    <span style="color:#22C55E; font-size:0.8rem; font-weight:600;">✓ Yes</span>
+                  ) : (
+                    <span style="color:#9CA3AF; font-size:0.8rem;">No</span>
+                  )}
+                </td>
+                <td>
+                  <div style="display:flex; gap:0.5rem;">
+                    <a href={`/admin/reviews/edit/${r.id}`} class="btn-admin btn-admin--outline btn-admin--sm">Edit</a>
+                    <form method="POST" action="/admin/api/reviews" style="display:inline;" onsubmit="return confirm('Delete this review?')">
+                      <input type="hidden" name="_action" value="delete" />
+                      <input type="hidden" name="id" value={r.id} />
+                      <button type="submit" class="btn-admin btn-admin--danger btn-admin--sm">Delete</button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+  </div>
+</AdminLayout>

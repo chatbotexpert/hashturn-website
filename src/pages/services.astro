@@ -1,0 +1,366 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const services = [
+  {
+    id: 'bpa',
+    icon: '⚡',
+    iconBg: '#DCFCE7',
+    iconColor: '#16A34A',
+    title: 'Business Process Automation',
+    tagline: 'Stop doing manually what machines can do better.',
+    description: `Every business has repetitive processes that eat time and drain energy. We analyze your existing workflows, identify automation opportunities, and build systems that handle the routine work — so your team can focus on what only humans can do.`,
+    benefits: [
+      'Automated invoice generation and sending',
+      'Scheduled reporting and data exports',
+      'Employee onboarding and offboarding flows',
+      'Approval workflows and document routing',
+      'Automated notifications and reminders',
+      'Data validation and quality checks',
+    ],
+    tools: ['Make.com', 'n8n', 'Power Automate', 'Zapier'],
+  },
+  {
+    id: 'rpa',
+    icon: '🤖',
+    iconBg: '#FEF3C7',
+    iconColor: '#D97706',
+    title: 'Robotic Process Automation (RPA)',
+    tagline: 'Software robots that work 24/7 without breaks or errors.',
+    description: `RPA bots interact with your existing software exactly like a human would — clicking, typing, reading screens, copying data — but faster, more accurately, and around the clock. Perfect for tasks that can't be automated with APIs.`,
+    benefits: [
+      'Web scraping and data extraction',
+      'Legacy system automation (no API needed)',
+      'Automated form filling and data entry',
+      'ERP and CRM data migration',
+      'Report generation from multiple systems',
+      'Scheduled batch processing jobs',
+    ],
+    tools: ['UiPath', 'Power Automate Desktop', 'Automation Anywhere'],
+  },
+  {
+    id: 'api',
+    icon: '🔗',
+    iconBg: '#DBEAFE',
+    iconColor: '#2563EB',
+    title: 'API & Webhook Integration',
+    tagline: 'Connect every tool in your tech stack — automatically.',
+    description: `Your business runs on multiple apps that don't talk to each other. We build the bridges. When a deal closes in your CRM, it automatically creates an invoice, updates your project management tool, and sends a Slack notification — no manual steps.`,
+    benefits: [
+      'CRM to accounting software sync',
+      'Ecommerce order management automation',
+      'Real-time data sync between platforms',
+      'Custom webhook handlers and listeners',
+      'Third-party payment gateway integration',
+      'Multi-system data aggregation dashboards',
+    ],
+    tools: ['Make.com', 'n8n', 'REST APIs', 'GraphQL', 'Webhooks'],
+  },
+  {
+    id: 'crm',
+    icon: '👥',
+    iconBg: '#FCE7F3',
+    iconColor: '#DB2777',
+    title: 'CRM Automation',
+    tagline: 'Your sales pipeline on autopilot — from lead to close.',
+    description: `Stop letting leads fall through the cracks. We automate your entire CRM workflow — lead capture, scoring, nurturing sequences, follow-up reminders, deal updates, and reporting — so your sales team spends more time selling and less time on admin.`,
+    benefits: [
+      'Automated lead capture from all channels',
+      'Lead scoring and prioritization',
+      'Personalized email follow-up sequences',
+      'Deal stage automation and notifications',
+      'Activity logging and task creation',
+      'Sales pipeline reporting and dashboards',
+    ],
+    tools: ['HubSpot', 'Salesforce', 'Pipedrive', 'Zoho CRM', 'GoHighLevel'],
+  },
+  {
+    id: 'microsoft',
+    icon: '🏢',
+    iconBg: '#EDE9FE',
+    iconColor: '#7C3AED',
+    title: 'Microsoft 365 Solutions',
+    tagline: 'The full power of Microsoft — customized for your team.',
+    description: `If your business runs on Microsoft 365, we can unlock its full potential. From SharePoint intranets and Power Apps portals to complex Excel VBA macros and Power Automate flows — we build tools that live inside the Microsoft environment your team already uses.`,
+    benefits: [
+      'SharePoint site design and automation',
+      'Power Apps custom business applications',
+      'Power Automate workflow development',
+      'Excel VBA and Office Scripts automation',
+      'Power BI dashboards and reporting',
+      'Word document population and generation',
+    ],
+    tools: ['SharePoint', 'Power Apps', 'Power Automate', 'Excel VBA', 'Power BI', 'Microsoft Teams'],
+  },
+  {
+    id: 'dev',
+    icon: '📱',
+    iconBg: '#D1FAE5',
+    iconColor: '#059669',
+    title: 'Mobile & Web Development',
+    tagline: 'Custom apps that fit your business perfectly.',
+    description: `Sometimes you need software built exactly the way you want it — not a workaround using existing tools. We build web apps, mobile apps, and ecommerce stores that solve your specific business problems, with clean code and great user experience.`,
+    benefits: [
+      'Next.js and React web applications',
+      'Flutter cross-platform mobile apps',
+      'React Native iOS and Android apps',
+      'Shopify ecommerce stores and custom themes',
+      'Customer portals and internal dashboards',
+      'API development and backend services',
+    ],
+    tools: ['Next.js', 'Flutter', 'React Native', 'Shopify', 'Node.js', 'Supabase'],
+  },
+];
+---
+
+<Layout
+  title="HashTurn Services — Business Automation, RPA, API Integration & More"
+  description="Explore HashTurn's full range of automation services: business process automation, RPA, API integration, CRM automation, Microsoft 365, and mobile & web development."
+>
+
+  <!-- Page Hero -->
+  <section class="page-hero">
+    <div class="container text-center">
+      <p class="section-label">Our Services</p>
+      <h1>Everything You Need to<br /><span style="color:var(--green)">Automate Your Business</span></h1>
+      <p class="page-hero__sub">
+        From simple workflow automation to complex enterprise integrations — we have the tools,
+        expertise, and experience to deliver results fast.
+      </p>
+      <a href="/contact" class="btn btn--green btn--lg" style="margin-top:2rem;">
+        Get a Free Quote &rarr;
+      </a>
+    </div>
+  </section>
+
+  <!-- Services List -->
+  <section class="section">
+    <div class="container">
+      <div class="services-list">
+        {services.map((service, index) => (
+          <div class="service-full" id={service.id}>
+            <div class={`service-full__inner ${index % 2 === 1 ? 'service-full__inner--flip' : ''}`}>
+              <div class="service-full__content">
+                <div class="service-full__icon" style={`background:${service.iconBg}; color:${service.iconColor};`}>
+                  {service.icon}
+                </div>
+                <h2>{service.title}</h2>
+                <p class="service-tagline">{service.tagline}</p>
+                <p class="service-desc">{service.description}</p>
+
+                <div class="service-tools">
+                  {service.tools.map(tool => (
+                    <span class="tool-tag">{tool}</span>
+                  ))}
+                </div>
+
+                <a href="/contact" class="btn btn--green" style="margin-top:2rem;">
+                  Get a Quote for This Service &rarr;
+                </a>
+              </div>
+
+              <div class="service-full__benefits">
+                <h3>What We Deliver</h3>
+                <ul>
+                  {service.benefits.map(b => (
+                    <li>
+                      <span class="benefit-check">&#10003;</span>
+                      {b}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Bottom CTA -->
+  <section class="cta-section">
+    <div class="container text-center">
+      <p class="section-label" style="color:var(--green);">Start Today</p>
+      <h2 style="color:var(--white); font-size:clamp(1.7rem,3.5vw,2.75rem); margin-bottom:1rem;">
+        Not Sure Which Service You Need?
+      </h2>
+      <p style="color:rgba(255,255,255,0.85); max-width:480px; margin:0 auto 2.5rem; font-size:1.1rem;">
+        Book a free 30-minute call. We will analyze your business and recommend exactly
+        what will save you the most time and money.
+      </p>
+      <a href="/contact" class="btn btn--green btn--lg">
+        Book Free Strategy Call &rarr;
+      </a>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  .page-hero {
+    background: var(--black);
+    padding: 4.5rem 1.5rem 5.5rem;
+  }
+
+  .page-hero h1 {
+    color: var(--white);
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    margin-bottom: 1rem;
+  }
+
+  .page-hero__sub {
+    color: rgba(255,255,255,0.85);
+    font-size: 1.15rem;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  /* Services list */
+  .services-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5rem;
+  }
+
+  .service-full {
+    scroll-margin-top: 90px;
+  }
+
+  .service-full__inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  .service-full__inner--flip {
+    direction: rtl;
+  }
+
+  .service-full__inner--flip > * {
+    direction: ltr;
+  }
+
+  .service-full__icon {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--r-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .service-full__content h2 {
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    margin-bottom: 0.5rem;
+    color: var(--gray-900);
+  }
+
+  .service-tagline {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--green-dark);
+    margin-bottom: 1rem;
+  }
+
+  .service-desc {
+    font-size: 0.97rem;
+    color: #4B5563;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+  }
+
+  .service-tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tool-tag {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--gray-600);
+    background: var(--gray-100);
+    border: 1px solid var(--gray-200);
+    border-radius: 50px;
+    padding: 0.3rem 0.75rem;
+  }
+
+  /* Benefits panel */
+  .service-full__benefits {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--r-lg);
+    padding: 2rem 2.5rem;
+  }
+
+  .service-full__benefits h3 {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gray-500);
+    margin-bottom: 1.25rem;
+  }
+
+  .service-full__benefits ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .service-full__benefits li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    font-size: 0.95rem;
+    color: #374151;
+  }
+
+  .benefit-check {
+    width: 22px;
+    height: 22px;
+    background: var(--green-light);
+    color: var(--green-dark);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* CTA */
+  .cta-section {
+    background: var(--black);
+    padding: 6rem 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(34,197,94,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .cta-section .container { position: relative; z-index: 1; }
+
+  @media (max-width: 900px) {
+    .service-full__inner,
+    .service-full__inner--flip {
+      grid-template-columns: 1fr;
+      direction: ltr;
+      gap: 2rem;
+    }
+  }
+</style>

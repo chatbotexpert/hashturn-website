@@ -1,0 +1,35 @@
+[
+  {
+    "id": "1",
+    "name": "Zeeshan Bilal",
+    "role": "Founder",
+    "bio": "Specializes in Make.com, n8n, and Power Automate. 200+ automation projects delivered with a 5-star track record.",
+    "avatar": "ZB",
+    "avatarColor": "#22c55e",
+    "image": "/uploads/team/team-1-1773815476062.jpg",
+    "linkedin": "https://www.linkedin.com/in/billalzeeshaan",
+    "order": 1
+  },
+  {
+    "id": "2",
+    "name": "Zaid Nehal",
+    "role": "RPA Developer",
+    "bio": "UiPath certified developer with deep expertise in enterprise robotic process automation and legacy system integration.",
+    "avatar": "ZN",
+    "avatarColor": "#3b82f6",
+    "image": "/uploads/team/team-2-1773816274370.png",
+    "linkedin": "https://www.linkedin.com/in/billalzeeshaan",
+    "order": 2
+  },
+  {
+    "id": "3",
+    "name": "Khalid R.",
+    "role": "Microsoft 365 Specialist",
+    "bio": "Power Platform and SharePoint expert. Builds custom business applications and workflows inside the Microsoft ecosystem.",
+    "avatar": "KR",
+    "avatarColor": "#EAB308",
+    "image": "",
+    "linkedin": "",
+    "order": 3
+  }
+]

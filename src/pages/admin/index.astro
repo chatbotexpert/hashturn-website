@@ -1,0 +1,181 @@
+---
+export const prerender = false;
+
+const SESSION_COOKIE = 'ht_session';
+const SESSION_SECRET = 'hashturn-admin-secret-2025';
+
+const session = Astro.cookies.get(SESSION_COOKIE);
+if (session?.value === SESSION_SECRET) {
+  return Astro.redirect('/admin/dashboard');
+}
+
+const hasError = Astro.url.searchParams.get('error') === '1';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Admin Login — HashTurn</title>
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: #0D0D0D;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+      }
+
+      .login-box {
+        background: #111827;
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 16px;
+        padding: 2.5rem;
+        width: 100%;
+        max-width: 400px;
+      }
+
+      .login-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin-bottom: 2rem;
+        justify-content: center;
+      }
+
+      .logo-mark {
+        width: 28px; height: 28px; position: relative; flex-shrink: 0;
+      }
+      .logo-mark span { position: absolute; border-radius: 2px; }
+      .lm-r { width: 6px; height: 20px; background: #EF4444; left: 4px; top: 3px; z-index: 2; }
+      .lm-y { width: 6px; height: 20px; background: #EAB308; left: 16px; top: 3px; z-index: 2; }
+      .lm-g { width: 22px; height: 6px; background: #22C55E; left: 2px; top: 4px; z-index: 1; }
+      .lm-b { width: 22px; height: 6px; background: #3B82F6; left: 2px; top: 14px; z-index: 1; }
+
+      .logo-text {
+        font-size: 1rem; font-weight: 700;
+        letter-spacing: 0.06em; color: #fff;
+      }
+
+      h1 {
+        font-size: 1.2rem; font-weight: 700;
+        color: #fff; text-align: center;
+        margin-bottom: 0.35rem;
+      }
+
+      .subtitle {
+        font-size: 0.85rem; color: rgba(255,255,255,0.4);
+        text-align: center; margin-bottom: 2rem;
+      }
+
+      .alert-error {
+        background: rgba(239,68,68,0.12);
+        border: 1px solid rgba(239,68,68,0.3);
+        color: #FCA5A5;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        margin-bottom: 1.25rem;
+        text-align: center;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        margin-bottom: 1rem;
+      }
+
+      label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: rgba(255,255,255,0.55);
+      }
+
+      input {
+        border: 1.5px solid rgba(255,255,255,0.1);
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+        font-family: inherit;
+        color: #fff;
+        background: rgba(255,255,255,0.05);
+        outline: none;
+        width: 100%;
+        transition: border-color 0.15s;
+      }
+
+      input:focus {
+        border-color: #22C55E;
+      }
+
+      button[type="submit"] {
+        width: 100%;
+        padding: 0.85rem;
+        margin-top: 0.5rem;
+        background: #22C55E;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 700;
+        cursor: pointer;
+        font-family: inherit;
+        transition: background 0.15s;
+      }
+
+      button[type="submit"]:hover { background: #16A34A; }
+
+      .back-link {
+        display: block;
+        text-align: center;
+        margin-top: 1.25rem;
+        font-size: 0.8rem;
+        color: rgba(255,255,255,0.3);
+        text-decoration: none;
+      }
+
+      .back-link:hover { color: rgba(255,255,255,0.6); }
+    </style>
+  </head>
+  <body>
+    <div class="login-box">
+      <div class="login-logo">
+        <span class="logo-mark">
+          <span class="lm-r"></span>
+          <span class="lm-g"></span>
+          <span class="lm-y"></span>
+          <span class="lm-b"></span>
+        </span>
+        <span class="logo-text">HASHTURN</span>
+      </div>
+
+      <h1>Admin Login</h1>
+      <p class="subtitle">Sign in to manage your website</p>
+
+      {hasError && (
+        <div class="alert-error">Incorrect username or password. Please try again.</div>
+      )}
+
+      <form method="POST" action="/admin/api/login">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" autocomplete="username" required autofocus />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" autocomplete="current-password" required />
+        </div>
+        <button type="submit">Sign In</button>
+      </form>
+
+      <a href="/" class="back-link">← Back to website</a>
+    </div>
+  </body>
+</html>

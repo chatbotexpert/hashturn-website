@@ -1,0 +1,120 @@
+---
+import Layout from '../layouts/Layout.astro';
+const lastUpdated = 'March 17, 2026';
+---
+
+<Layout
+  title="Refund Policy — HashTurn"
+  description="HashTurn Refund Policy — our commitment to client satisfaction and how we handle refunds and revisions."
+>
+  <section class="page-hero">
+    <div class="container text-center">
+      <p class="section-label">Legal</p>
+      <h1 style="color:var(--white);">Refund Policy</h1>
+      <p style="color:rgba(255,255,255,0.5); font-size:0.9rem; margin-top:0.5rem;">Last updated: {lastUpdated}</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="legal-prose container">
+
+      <div class="policy-highlight">
+        <strong>&#9989; Our Commitment:</strong> We stand behind every project we deliver. If we don't deliver what we promised, you get your money back.
+      </div>
+
+      <h2>1. Our Satisfaction Guarantee</h2>
+      <p>HashTurn is committed to delivering high-quality work that meets the agreed scope. We have a 5-star track record with 200+ projects. Client satisfaction is our top priority.</p>
+
+      <h2>2. Revisions &amp; Adjustments</h2>
+      <p>All projects include a revision period (specified in the project agreement) during which we will make reasonable adjustments at no additional charge. We encourage clients to review deliverables carefully and provide clear feedback.</p>
+      <p>Revision rounds typically include:</p>
+      <ul>
+        <li><strong>Starter projects:</strong> 2 rounds of revisions within 14 days of delivery</li>
+        <li><strong>Growth projects:</strong> 3 rounds of revisions within 30 days of delivery</li>
+        <li><strong>Enterprise projects:</strong> Unlimited revisions within the agreed support period</li>
+      </ul>
+
+      <h2>3. When Refunds Are Issued</h2>
+      <p>You are entitled to a full or partial refund in the following situations:</p>
+      <ul>
+        <li><strong>Work not started:</strong> If you cancel before we begin work, your full deposit is refunded.</li>
+        <li><strong>Failed delivery:</strong> If HashTurn is unable to deliver the agreed scope of work, you receive a full refund for work not completed.</li>
+        <li><strong>Critical defect not resolved:</strong> If a delivered automation completely fails to function as specified and we are unable to fix it within the revision period, a full refund is issued.</li>
+      </ul>
+
+      <h2>4. When Refunds Are Not Issued</h2>
+      <p>Refunds will not be issued in the following situations:</p>
+      <ul>
+        <li>Work has been delivered as specified and the client changes their mind</li>
+        <li>The client provides incorrect requirements that affect the outcome</li>
+        <li>The client delays or fails to provide necessary access or information</li>
+        <li>Issues arise from third-party tools, platforms, or APIs outside our control</li>
+        <li>The client has already approved and used the deliverables</li>
+      </ul>
+
+      <h2>5. Partial Refunds</h2>
+      <p>For projects partially completed before cancellation, a partial refund may be issued based on the proportion of work not yet delivered. This is calculated fairly and agreed upon in writing.</p>
+
+      <h2>6. Requesting a Refund</h2>
+      <p>To request a refund, contact us at <a href="mailto:hello@hashturn.com">hello@hashturn.com</a> with your project details and reason for the refund. We will respond within 2 business days and work to resolve the issue fairly.</p>
+
+      <h2>7. Fiverr Orders</h2>
+      <p>For projects commissioned through Fiverr, Fiverr's own dispute resolution and refund policies apply in addition to this policy. Please refer to Fiverr's Terms of Service for details.</p>
+
+      <h2>8. Contact</h2>
+      <p>Questions about refunds? Email us at <a href="mailto:hello@hashturn.com">hello@hashturn.com</a> or use our <a href="/contact">contact form</a>. We're here to make things right.</p>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .page-hero {
+    background: var(--black);
+    padding: 3.5rem 1.5rem 4.5rem;
+  }
+
+  .legal-prose {
+    max-width: 780px;
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--gray-600);
+  }
+
+  .policy-highlight {
+    background: var(--green-light);
+    border: 1px solid rgba(34,197,94,0.3);
+    border-radius: var(--r-sm);
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+    color: var(--green-dark);
+  }
+
+  .legal-prose h2 {
+    font-size: 1.2rem;
+    color: var(--gray-900);
+    margin: 2.5rem 0 0.75rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--gray-100);
+  }
+
+  .legal-prose h2:first-child {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+  }
+
+  .legal-prose p { margin-bottom: 1rem; }
+
+  .legal-prose ul {
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .legal-prose li { margin-bottom: 0.5rem; }
+
+  .legal-prose a {
+    color: var(--green-dark);
+    text-decoration: underline;
+  }
+</style>

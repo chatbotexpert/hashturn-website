@@ -1,0 +1,108 @@
+---
+import Layout from '../layouts/Layout.astro';
+const lastUpdated = 'March 17, 2026';
+---
+
+<Layout
+  title="Terms of Service — HashTurn"
+  description="HashTurn Terms of Service — the rules and conditions for using our services."
+>
+  <section class="page-hero">
+    <div class="container text-center">
+      <p class="section-label">Legal</p>
+      <h1 style="color:var(--white);">Terms of Service</h1>
+      <p style="color:rgba(255,255,255,0.5); font-size:0.9rem; margin-top:0.5rem;">Last updated: {lastUpdated}</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="legal-prose container">
+      <h2>1. Acceptance of Terms</h2>
+      <p>By engaging HashTurn for any services, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services.</p>
+
+      <h2>2. Services</h2>
+      <p>HashTurn provides IT automation, software development, and related consulting services. The specific scope, deliverables, timeline, and pricing for each project are agreed upon in writing before work begins.</p>
+
+      <h2>3. Project Agreements</h2>
+      <p>Each project is governed by a project agreement that outlines the scope of work, timeline, payment terms, and deliverables. No work begins until a project agreement is confirmed. Changes to project scope must be agreed upon in writing and may affect pricing and timeline.</p>
+
+      <h2>4. Payment Terms</h2>
+      <p>Payment terms are specified in each project agreement. Typically, a deposit is required before work begins. Remaining payments are due upon milestone completion or project delivery. HashTurn reserves the right to pause or suspend work on overdue accounts.</p>
+
+      <h2>5. Intellectual Property</h2>
+      <p>Upon full payment, the client owns all custom deliverables created specifically for their project. This does not include third-party tools, platforms, or pre-existing frameworks used in the project. HashTurn retains the right to showcase completed work in portfolios unless otherwise agreed.</p>
+
+      <h2>6. Confidentiality</h2>
+      <p>Both parties agree to keep confidential any sensitive business information shared during the engagement. HashTurn will not share your business data, processes, or proprietary information with third parties without your consent.</p>
+
+      <h2>7. Client Responsibilities</h2>
+      <p>The client is responsible for:</p>
+      <ul>
+        <li>Providing accurate and complete project requirements</li>
+        <li>Providing timely access to necessary systems, accounts, and data</li>
+        <li>Reviewing and approving deliverables within agreed timelines</li>
+        <li>Ensuring compliance with applicable laws for their use of our deliverables</li>
+      </ul>
+
+      <h2>8. Limitation of Liability</h2>
+      <p>HashTurn is not liable for any indirect, incidental, or consequential damages arising from the use of our services. Our total liability for any claim is limited to the amount paid for the specific project giving rise to the claim.</p>
+
+      <h2>9. Warranties</h2>
+      <p>HashTurn warrants that services will be performed in a professional manner consistent with industry standards. We do not warrant that any automation or software will be error-free or uninterrupted in all environments.</p>
+
+      <h2>10. Termination</h2>
+      <p>Either party may terminate a project agreement with written notice. In the event of termination, the client is responsible for payment of work completed up to the termination date. Deposits are non-refundable unless HashTurn fails to commence work.</p>
+
+      <h2>11. Governing Law</h2>
+      <p>These terms are governed by applicable law. Any disputes will be resolved through good-faith negotiation before pursuing formal legal action.</p>
+
+      <h2>12. Changes to Terms</h2>
+      <p>HashTurn reserves the right to update these terms at any time. Updated terms will be posted on this page with a revised date.</p>
+
+      <h2>13. Contact</h2>
+      <p>Questions about these terms? Email us at <a href="mailto:hello@hashturn.com">hello@hashturn.com</a>.</p>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .page-hero {
+    background: var(--black);
+    padding: 3.5rem 1.5rem 4.5rem;
+  }
+
+  .legal-prose {
+    max-width: 780px;
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--gray-600);
+  }
+
+  .legal-prose h2 {
+    font-size: 1.2rem;
+    color: var(--gray-900);
+    margin: 2.5rem 0 0.75rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--gray-100);
+  }
+
+  .legal-prose h2:first-child {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+  }
+
+  .legal-prose p { margin-bottom: 1rem; }
+
+  .legal-prose ul {
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .legal-prose li { margin-bottom: 0.4rem; }
+
+  .legal-prose a {
+    color: var(--green-dark);
+    text-decoration: underline;
+  }
+</style>

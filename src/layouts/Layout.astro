@@ -1,0 +1,31 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import CalendlyPopup from '../components/CalendlyPopup.astro';
+import Nav from '../components/Nav.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+}
+
+const {
+  title = 'HashTurn — Business Automation Experts',
+  description = 'HashTurn builds custom automation systems that eliminate repetitive tasks, connect your apps, and save your team hundreds of hours every month.',
+  image,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={title} description={description} image={image} />
+  </head>
+  <body>
+    <Nav />
+    <slot />
+    <SiteFooter />
+    <CalendlyPopup />
+  </body>
+</html>

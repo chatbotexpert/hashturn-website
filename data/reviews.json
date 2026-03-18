@@ -1,0 +1,46 @@
+[
+  {
+    "id": "1",
+    "name": "James M.",
+    "location": "Operations Manager, UK",
+    "initials": "JM",
+    "rating": 5,
+    "text": "HashTurn completely transformed our invoicing process. What used to take our team 3 hours daily now runs automatically. The ROI was immediate and the quality of work was exceptional.",
+    "source": "fiverr",
+    "featured": true,
+    "createdAt": "2024-09-15"
+  },
+  {
+    "id": "2",
+    "name": "Sarah R.",
+    "location": "Business Owner, USA",
+    "initials": "SR",
+    "rating": 5,
+    "text": "We needed our CRM, accounting software, and email marketing tool to all talk to each other. HashTurn built the perfect integration in 3 days. Communication was excellent throughout.",
+    "source": "fiverr",
+    "featured": true,
+    "createdAt": "2024-10-02"
+  },
+  {
+    "id": "3",
+    "name": "Ahmed T.",
+    "location": "IT Manager, UAE",
+    "initials": "AT",
+    "rating": 5,
+    "text": "The Power Automate solution they built for our SharePoint saves us 15+ hours per week. Professional, fast, and exactly what we needed. Will absolutely work with HashTurn again.",
+    "source": "fiverr",
+    "featured": true,
+    "createdAt": "2024-11-20"
+  },
+  {
+    "id": "4",
+    "name": "Maria K.",
+    "location": "CEO, Netherlands",
+    "initials": "MK",
+    "rating": 5,
+    "text": "Hired HashTurn to automate our entire order management system. What took 5 people half a day now runs in minutes. Incredible work and very responsive team.",
+    "source": "Google",
+    "featured": true,
+    "createdAt": "2024-12-05"
+  }
+]

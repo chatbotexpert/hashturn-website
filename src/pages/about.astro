@@ -1,0 +1,529 @@
+---
+import Layout from '../layouts/Layout.astro';
+import teamsData from '../../data/teams.json';
+
+const team = [...teamsData].sort((a, b) => a.order - b.order);
+---
+
+<Layout
+  title="About HashTurn — IT Automation Company With 200+ Projects"
+  description="HashTurn is an IT automation company with 200+ projects delivered. We help businesses save time and money through custom automation, RPA, and software development."
+>
+
+  <!-- Hero -->
+  <section class="page-hero">
+    <div class="container text-center">
+      <p class="section-label">About Us</p>
+      <h1>We Are HashTurn.<br /><span style="color:var(--green)">We Build Automation That Works.</span></h1>
+      <p class="page-hero__sub">
+        A team of automation engineers, developers, and process specialists
+        obsessed with one goal: saving businesses time and money.
+      </p>
+    </div>
+  </section>
+
+  <!-- Mission -->
+  <section class="section">
+    <div class="container">
+      <div class="mission-grid">
+        <div>
+          <p class="section-label">Our Mission</p>
+          <h2 class="section-title">Every Hour Saved Is an Hour Earned</h2>
+          <p style="font-size:1.05rem; color:#4B5563; line-height:1.8; margin-bottom:1.5rem;">
+            HashTurn was built on a simple idea: businesses waste enormous amounts of time
+            on repetitive tasks that technology can handle better. Manual data entry, copy-pasting
+            between apps, generating the same reports every week, sending the same emails &mdash; none
+            of this should require a human.
+          </p>
+          <p style="font-size:1.05rem; color:#4B5563; line-height:1.8; margin-bottom:1.5rem;">
+            We started on Fiverr, delivering hundreds of automation projects for businesses
+            around the world. We earned a 5-star reputation by doing one thing consistently:
+            building automation that actually works, on time, and exactly as promised.
+          </p>
+          <p style="font-size:1.05rem; color:#4B5563; line-height:1.8;">
+            Today, HashTurn is a full-service automation company. We work with businesses
+            across every industry &mdash; retail, finance, healthcare, logistics, and more &mdash; helping
+            them save hundreds of hours every month.
+          </p>
+        </div>
+
+        <div class="mission-stats">
+          <div class="mstat">
+            <div class="mstat__num">200+</div>
+            <div class="mstat__lbl">Projects Delivered</div>
+          </div>
+          <div class="mstat">
+            <div class="mstat__num">50+</div>
+            <div class="mstat__lbl">Clients Served</div>
+          </div>
+          <div class="mstat">
+            <div class="mstat__num">5&#9733;</div>
+            <div class="mstat__lbl">Fiverr Rating</div>
+          </div>
+          <div class="mstat">
+            <div class="mstat__num">5,000+</div>
+            <div class="mstat__lbl">Hours Saved</div>
+          </div>
+          <div class="mstat mstat--wide">
+            <div class="mstat__num">Global</div>
+            <div class="mstat__lbl">Clients across USA, UK, Europe, Middle East &amp; Asia</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Values -->
+  <section class="section section--gray">
+    <div class="container">
+      <div class="text-center" style="margin-bottom:3rem;">
+        <p class="section-label">What We Believe</p>
+        <h2 class="section-title">Our Values</h2>
+      </div>
+
+      <div class="values-grid">
+        <div class="value-card">
+          <div class="value-icon">&#128269;</div>
+          <h3>Understand First, Build Second</h3>
+          <p>We never start building until we fully understand your business, your processes, and your goals. The best automation starts with the right strategy.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">&#9989;</div>
+          <h3>Quality Over Speed</h3>
+          <p>We deliver fast &mdash; but never sacrifice quality. Every automation is thoroughly tested before it goes live. We stand behind our work.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">&#128172;</div>
+          <h3>Clear Communication</h3>
+          <p>No jargon, no black boxes. You always know exactly what we are building, why, and when it will be ready. No surprises, ever.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">&#128200;</div>
+          <h3>Real ROI, Real Results</h3>
+          <p>We focus on measurable outcomes &mdash; hours saved, errors eliminated, revenue recovered. If it does not move the needle, we do not build it.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team Section -->
+  <section class="section">
+    <div class="container">
+      <div class="text-center" style="margin-bottom:3rem;">
+        <p class="section-label">Our People</p>
+        <h2 class="section-title">Meet the Team</h2>
+        <p class="section-sub" style="margin:0 auto;">
+          The specialists who design, build, and support your automation.
+        </p>
+      </div>
+
+      <div class="team-grid">
+        {team.map((member) => (
+          <div class="team-card">
+            <div class="team-card__top">
+              {(member as any).image ? (
+                <img src={(member as any).image} alt={member.name} class="team-photo" />
+              ) : (
+                <div class="team-avatar" style={`background:${member.avatarColor}22; color:${member.avatarColor};`}>
+                  {member.avatar}
+                </div>
+              )}
+            </div>
+            <div class="team-card__body">
+              <h3 class="team-name">{member.name}</h3>
+              <p class="team-role">{member.role}</p>
+              <p class="team-bio">{member.bio}</p>
+            </div>
+            {(member as any).linkedin && (
+              <div class="team-card__footer">
+                <a href={(member as any).linkedin} target="_blank" rel="noopener noreferrer" class="linkedin-btn" aria-label={`${member.name} on LinkedIn`}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                  LinkedIn
+                </a>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Tools & Expertise -->
+  <section class="section">
+    <div class="container">
+      <div class="text-center" style="margin-bottom:3rem;">
+        <p class="section-label">Our Expertise</p>
+        <h2 class="section-title">Tools We Master</h2>
+        <p class="section-sub" style="margin:0 auto;">
+          We are certified in the world's leading automation and development platforms.
+        </p>
+      </div>
+
+      <div class="expertise-grid">
+        <div class="expertise-category">
+          <h3>Automation Platforms</h3>
+          <ul>
+            <li>Make.com (Integromat)</li>
+            <li>n8n (self-hosted &amp; cloud)</li>
+            <li>Power Automate</li>
+            <li>Zapier</li>
+          </ul>
+        </div>
+        <div class="expertise-category">
+          <h3>RPA Tools</h3>
+          <ul>
+            <li>UiPath</li>
+            <li>Power Automate Desktop</li>
+            <li>Automation Anywhere</li>
+          </ul>
+        </div>
+        <div class="expertise-category">
+          <h3>Microsoft Ecosystem</h3>
+          <ul>
+            <li>SharePoint</li>
+            <li>Power Apps</li>
+            <li>Excel VBA &amp; Office Scripts</li>
+            <li>Power BI</li>
+          </ul>
+        </div>
+        <div class="expertise-category">
+          <h3>Development</h3>
+          <ul>
+            <li>Next.js / React</li>
+            <li>Flutter</li>
+            <li>React Native</li>
+            <li>Node.js &amp; REST APIs</li>
+            <li>Shopify &amp; Ecommerce</li>
+          </ul>
+        </div>
+        <div class="expertise-category">
+          <h3>CRM Platforms</h3>
+          <ul>
+            <li>HubSpot</li>
+            <li>Salesforce</li>
+            <li>Pipedrive</li>
+            <li>GoHighLevel</li>
+            <li>Zoho CRM</li>
+          </ul>
+        </div>
+        <div class="expertise-category">
+          <h3>Industries Served</h3>
+          <ul>
+            <li>Retail &amp; Ecommerce</li>
+            <li>Finance &amp; Accounting</li>
+            <li>Healthcare &amp; Clinics</li>
+            <li>Logistics &amp; Supply Chain</li>
+            <li>Real Estate</li>
+            <li>Professional Services</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="container text-center">
+      <p class="section-label" style="color:var(--green);">Work With Us</p>
+      <h2 style="color:var(--white); font-size:clamp(1.7rem,3.5vw,2.75rem); margin-bottom:1rem;">
+        Ready to See What Automation<br />Can Do for Your Business?
+      </h2>
+      <p style="color:rgba(255,255,255,0.85); max-width:480px; margin:0 auto 2.5rem; font-size:1.1rem;">
+        Book a free strategy call. No commitment, no pressure &mdash; just an honest
+        conversation about your business and how we can help.
+      </p>
+      <a href="/contact" class="btn btn--green btn--lg">
+        Book Free Strategy Call &rarr;
+      </a>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  .page-hero {
+    background: var(--black);
+    padding: 4.5rem 1.5rem 5.5rem;
+  }
+
+  .page-hero h1 {
+    color: var(--white);
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    margin-bottom: 1rem;
+  }
+
+  .page-hero__sub {
+    color: rgba(255,255,255,0.85);
+    font-size: 1.15rem;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  /* Mission */
+  .mission-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: start;
+  }
+
+  .mission-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .mstat {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--r);
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .mstat--wide {
+    grid-column: 1 / -1;
+    background: var(--green);
+    border-color: var(--green);
+  }
+
+  .mstat__num {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    line-height: 1;
+    margin-bottom: 0.4rem;
+  }
+
+  .mstat--wide .mstat__num { color: var(--white); }
+
+  .mstat__lbl {
+    font-size: 0.9rem;
+    color: #4B5563;
+    line-height: 1.4;
+  }
+
+  .mstat--wide .mstat__lbl { color: rgba(255,255,255,0.85); }
+
+  /* Team */
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+
+  .team-card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    transition: box-shadow 0.25s, transform 0.25s;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .team-card:hover {
+    box-shadow: 0 8px 32px rgba(0,0,0,0.13);
+    transform: translateY(-4px);
+  }
+
+  .team-card__top {
+    background: linear-gradient(135deg, #f0fdf4 0%, #f8fafc 100%);
+    padding: 2rem 1.5rem 1.5rem;
+    display: flex;
+    justify-content: center;
+    border-bottom: 1px solid var(--gray-100);
+  }
+
+  .team-card__body {
+    padding: 1.5rem 1.5rem 1.25rem;
+    text-align: center;
+    flex: 1;
+  }
+
+  .team-card__footer {
+    padding: 0 1.5rem 1.25rem;
+    display: flex;
+    justify-content: center;
+  }
+
+  .team-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+    border: 4px solid var(--white);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  }
+
+  .team-photo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    border: 4px solid var(--white);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  }
+
+  .team-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 0.3rem;
+  }
+
+  .team-role {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--green-dark);
+    margin-bottom: 0.85rem;
+  }
+
+  .team-bio {
+    font-size: 0.92rem;
+    color: #4B5563;
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  .linkedin-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #0A66C2;
+    background: #EEF4FF;
+    border: 1px solid #BFDBFE;
+    border-radius: 50px;
+    padding: 0.35rem 0.85rem;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .linkedin-btn:hover {
+    background: #0A66C2;
+    color: #fff;
+    border-color: #0A66C2;
+  }
+
+  /* Values */
+  .values-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+
+  .value-card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--r);
+    padding: 2rem 1.5rem;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+
+  .value-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-3px);
+  }
+
+  .value-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+
+  .value-card h3 { font-size: 1rem; margin-bottom: 0.6rem; }
+
+  .value-card p {
+    font-size: 0.95rem;
+    color: #4B5563;
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  /* Expertise */
+  .expertise-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+
+  .expertise-category {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--r);
+    padding: 1.75rem;
+  }
+
+  .expertise-category h3 {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--green-dark);
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--green-light);
+  }
+
+  .expertise-category ul {
+    list-style: none;
+    padding: 0; margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+
+  .expertise-category li {
+    font-size: 0.9rem;
+    color: var(--gray-600);
+    padding-left: 1rem;
+    position: relative;
+  }
+
+  .expertise-category li::before {
+    content: '·';
+    position: absolute;
+    left: 0;
+    color: var(--green);
+    font-weight: 700;
+  }
+
+  /* CTA */
+  .cta-section {
+    background: var(--black);
+    padding: 6rem 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(34,197,94,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .cta-section .container { position: relative; z-index: 1; }
+
+  @media (max-width: 900px) {
+    .mission-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    .values-grid { grid-template-columns: repeat(2, 1fr); }
+    .expertise-grid { grid-template-columns: repeat(2, 1fr); }
+    .team-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 600px) {
+    .values-grid { grid-template-columns: 1fr; }
+    .expertise-grid { grid-template-columns: 1fr; }
+    .team-grid { grid-template-columns: 1fr; }
+    .mission-stats { grid-template-columns: 1fr 1fr; }
+  }
+</style>

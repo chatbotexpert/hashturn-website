@@ -1,0 +1,202 @@
+---
+import { getCollection } from 'astro:content';
+import FormattedDate from '../../components/FormattedDate.astro';
+import Layout from '../../layouts/Layout.astro';
+
+const posts = (await getCollection('blog')).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+---
+
+<Layout
+  title="HashTurn Blog — Automation Tips, Tutorials & Business Insights"
+  description="Read the latest from HashTurn — automation guides, RPA tutorials, and insights to help your business save time and scale faster."
+>
+  <!-- Page Hero -->
+  <section class="page-hero">
+    <div class="container text-center">
+      <p class="section-label">From the Blog</p>
+      <h1 style="color:var(--white);">Automation Insights &amp; Tutorials</h1>
+      <p style="color:rgba(255,255,255,0.6); max-width:480px; margin:0.75rem auto 0; font-size:1.05rem;">
+        Practical guides, industry tips, and stories from 200+ automation projects.
+      </p>
+    </div>
+  </section>
+
+  <!-- Blog Grid -->
+  <section class="section">
+    <div class="container">
+      {posts.length === 0 ? (
+        <div class="empty-state">
+          <p>No posts yet. Check back soon!</p>
+        </div>
+      ) : (
+        <ul class="blog-grid">
+          {posts.map((post, index) => (
+            <li class={index === 0 ? 'blog-card blog-card--featured' : 'blog-card'}>
+              <a href={`/blog/${post.id}/`}>
+                {post.data.heroImage && post.data.heroImage.startsWith('/') && (
+                  <div class="blog-card__img">
+                    <img src={post.data.heroImage} alt={post.data.title} />
+                  </div>
+                )}
+                <div class="blog-card__body">
+                  {post.data.tags && post.data.tags.length > 0 && (
+                    <div class="blog-card__tags">
+                      {post.data.tags.slice(0, 2).map(tag => (
+                        <span class="tag">{tag}</span>
+                      ))}
+                    </div>
+                  )}
+                  <h2 class="blog-card__title">{post.data.title}</h2>
+                  <p class="blog-card__desc">{post.data.description}</p>
+                  <div class="blog-card__meta">
+                    <FormattedDate date={post.data.pubDate} />
+                    {post.data.author && <span>&nbsp;&middot;&nbsp;{post.data.author}</span>}
+                  </div>
+                </div>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .page-hero {
+    background: var(--black);
+    padding: 4rem 1.5rem 5rem;
+  }
+
+  .blog-grid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+
+  .blog-card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--r);
+    overflow: hidden;
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+
+  .blog-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-3px);
+  }
+
+  .blog-card--featured {
+    grid-column: 1 / -1;
+  }
+
+  .blog-card--featured .blog-card__img img {
+    height: 380px;
+    object-fit: cover;
+  }
+
+  .blog-card a {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .blog-card--featured a {
+    flex-direction: row;
+  }
+
+  .blog-card--featured .blog-card__img {
+    flex: 1;
+    max-width: 55%;
+  }
+
+  .blog-card--featured .blog-card__body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2.5rem;
+  }
+
+  .blog-card__img img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+    border-radius: 0;
+    margin: 0;
+  }
+
+  .blog-card__body {
+    padding: 1.5rem;
+    flex: 1;
+  }
+
+  .blog-card__tags {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.75rem;
+  }
+
+  .tag {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--green-dark);
+    background: var(--green-light);
+    padding: 0.2rem 0.6rem;
+    border-radius: 50px;
+  }
+
+  .blog-card__title {
+    font-size: 1.15rem;
+    color: var(--gray-900);
+    margin-bottom: 0.6rem;
+    line-height: 1.3;
+  }
+
+  .blog-card--featured .blog-card__title {
+    font-size: 1.6rem;
+  }
+
+  .blog-card__desc {
+    font-size: 0.9rem;
+    color: var(--gray-500);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .blog-card__meta {
+    font-size: 0.82rem;
+    color: var(--gray-400);
+    margin-top: auto;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 4rem;
+    color: var(--gray-400);
+    font-size: 1.1rem;
+  }
+
+  @media (max-width: 768px) {
+    .blog-grid { grid-template-columns: 1fr; }
+    .blog-card--featured a { flex-direction: column; }
+    .blog-card--featured .blog-card__img { max-width: 100%; }
+    .blog-card--featured .blog-card__body { padding: 1.5rem; }
+  }
+</style>

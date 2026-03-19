@@ -45,7 +45,7 @@ const tools = ['Make.com', 'n8n', 'Power Automate', 'UiPath', 'Microsoft 365', '
 
     <!-- Services -->
     <div class="footer__col">
-      <h4 class="footer__col-title">Services</h4>
+      <h2 class="footer__col-title">Services</h4>
       <ul>
         {services.map(s => (
           <li><a href={s.href}>{s.label}</a></li>
@@ -55,14 +55,14 @@ const tools = ['Make.com', 'n8n', 'Power Automate', 'UiPath', 'Microsoft 365', '
 
     <!-- Company -->
     <div class="footer__col">
-      <h4 class="footer__col-title">Company</h4>
+      <h2 class="footer__col-title">Company</h4>
       <ul>
         {company.map(c => (
           <li><a href={c.href}>{c.label}</a></li>
         ))}
       </ul>
 
-      <h4 class="footer__col-title" style="margin-top:2rem;">Contact</h4>
+      <h2 class="footer__col-title" style="margin-top:2rem;">Contact</h2>
       <ul>
         <li><a href="mailto:hello@hashturn.com">hello@hashturn.com</a></li>
         <li><a href="/contact">Get a Free Quote</a></li>
@@ -168,7 +168,7 @@ const tools = ['Make.com', 'n8n', 'Power Automate', 'UiPath', 'Microsoft 365', '
 
   .footer__col a {
     font-size: 0.9rem;
-    color: rgba(255,255,255,0.55);
+    color: rgba(255,255,255,0.75);
     text-decoration: none;
     transition: color 0.15s;
   }
@@ -194,13 +194,13 @@ const tools = ['Make.com', 'n8n', 'Power Automate', 'UiPath', 'Microsoft 365', '
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.35);
+    color: rgba(255,255,255,0.65);
     margin-right: 0.25rem;
   }
 
   .footer__tool {
     font-size: 0.8rem;
-    color: rgba(255,255,255,0.4);
+    color: rgba(255,255,255,0.65);
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.08);
     padding: 0.3rem 0.75rem;
@@ -225,7 +225,7 @@ const tools = ['Make.com', 'n8n', 'Power Automate', 'UiPath', 'Microsoft 365', '
   }
 
   .footer__bottom-links a {
-    color: rgba(255,255,255,0.4);
+    color: rgba(255,255,255,0.65);
     text-decoration: none;
     transition: color 0.15s;
   }

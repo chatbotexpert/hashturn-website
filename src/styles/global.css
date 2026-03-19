@@ -143,12 +143,16 @@ p:last-child { margin-bottom: 0; }
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--green);
+  color: #15803D;
   margin-bottom: 1rem;
 }
 
 .section--dark .section-label {
   color: var(--green);
+}
+
+.section--green .section-label {
+  color: var(--white);
 }
 
 .section-title {
@@ -188,7 +192,7 @@ p:last-child { margin-bottom: 0; }
 
 .btn--green {
   background: var(--green);
-  color: var(--white);
+  color: var(--black);
   border-color: var(--green);
 }
 .btn--green:hover {

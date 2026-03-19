@@ -13,7 +13,7 @@ export async function uploadImage(file: File, folder: string): Promise<string> {
 
   const token = import.meta.env.BLOB_READ_WRITE_TOKEN;
   if (token) {
-    const blob = await put(filename, file, { access: 'private', token });
+    const blob = await put(filename, file, { access: 'public', token });
     return blob.url;
   }
 

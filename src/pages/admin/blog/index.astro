@@ -29,7 +29,7 @@ const posts = await sql`SELECT slug, title, description, pub_date, author FROM b
             </tr>
           </thead>
           <tbody>
-            {(posts as Record<string, unknown>[]).map(p => (
+            {(posts as any[]).map(p => (
               <tr>
                 <td>
                   <div style="font-weight:500;">{String(p.title)}</div>

@@ -101,7 +101,7 @@ export const POST: APIRoute = async ({ request }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: 'HashTurn <notifications@hashturn.com>',
+          from: 'HashTurn <notifications@notify.hashturn.com>',
           to: 'hello@hashturn.com',
           reply_to: email,
           subject,

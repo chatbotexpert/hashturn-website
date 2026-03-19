@@ -26,7 +26,7 @@ const projects = await sql`SELECT slug, title, client, service, tools, descripti
         <div class="empty-state"><p>No projects yet. Check back soon!</p></div>
       ) : (
         <div class="projects-grid">
-          {(projects as Record<string, unknown>[]).map(project => {
+          {(projects as any[]).map(project => {
             const tools: string[] = JSON.parse(String(project.tools ?? '[]'));
             const heroImage = String(project.hero_image ?? '');
             return (

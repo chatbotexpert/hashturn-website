@@ -4,7 +4,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 import { sql } from '../../../lib/db';
 
 const submissions = await sql`SELECT * FROM submissions ORDER BY submitted_at DESC`.catch(() => []);
-const newCount = (submissions as Record<string, unknown>[]).filter(s => s.status === 'new').length;
+const newCount = (submissions as any[]).filter(s => s.status === 'new').length;
 
 const statusColors: Record<string, string> = {
   new: '#22C55E', read: '#3B82F6', replied: '#8B5CF6', closed: '#9CA3AF',
@@ -33,7 +33,7 @@ function formatDate(iso: string) {
       </div>
     ) : (
       <div style="display:flex; flex-direction:column; gap:0;">
-        {(submissions as Record<string, unknown>[]).map(s => (
+        {(submissions as any[]).map(s => (
           <div style={`padding:1.25rem 1.5rem; border-bottom:1px solid #F3F4F6; ${s.status === 'new' ? 'background:rgba(34,197,94,0.04);' : ''}`}>
             <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; flex-wrap:wrap;">
               <div>

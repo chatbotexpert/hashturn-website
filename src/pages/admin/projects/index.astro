@@ -31,7 +31,7 @@ const projects = await sql`SELECT slug, title, client, service, tools, featured 
             </tr>
           </thead>
           <tbody>
-            {(projects as Record<string, unknown>[]).map(p => {
+            {(projects as any[]).map(p => {
               const toolsArr: string[] = JSON.parse(String(p.tools ?? '[]'));
               return (
                 <tr>

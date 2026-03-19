@@ -4,7 +4,7 @@ import Layout from '../layouts/Layout.astro';
 import { sql } from '../lib/db';
 
 const teamRows = await sql`SELECT id, name, role, bio, avatar, avatar_color, image, linkedin FROM team_members ORDER BY display_order ASC`.catch(() => []);
-const team = teamRows as Record<string, unknown>[];
+const team = teamRows as any[];
 ---
 
 <Layout

@@ -4,7 +4,7 @@ import Layout from '../layouts/Layout.astro';
 import { sql } from '../lib/db';
 
 const dbReviews = await sql`SELECT id, name, location, initials, rating, review_text AS text, source FROM reviews WHERE featured=true ORDER BY created_at DESC`.catch(() => []);
-const featuredReviews = dbReviews as Record<string, unknown>[];
+const featuredReviews = dbReviews as any[];
 ---
 
 <Layout

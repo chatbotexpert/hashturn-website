@@ -31,7 +31,7 @@ const reviews = await sql`SELECT id, name, location, rating, review_text, source
             </tr>
           </thead>
           <tbody>
-            {(reviews as Record<string, unknown>[]).map(r => (
+            {(reviews as any[]).map(r => (
               <tr>
                 <td>
                   <div style="font-weight:500;">{String(r.name)}</div>

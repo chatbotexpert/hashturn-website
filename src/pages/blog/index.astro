@@ -26,7 +26,7 @@ const posts = await sql`SELECT slug, title, description, pub_date, author, tags,
         <div class="empty-state"><p>No posts yet. Check back soon!</p></div>
       ) : (
         <ul class="blog-grid">
-          {(posts as Record<string, unknown>[]).map((post, index) => {
+          {(posts as any[]).map((post, index) => {
             const tags: string[] = JSON.parse(String(post.tags ?? '[]'));
             const heroImage = String(post.hero_image ?? '');
             return (

@@ -11,8 +11,9 @@ export async function uploadImage(file: File, folder: string): Promise<string> {
   const ext = file.name.split('.').pop()?.toLowerCase() ?? 'jpg';
   const filename = `${folder}/${Date.now()}.${ext}`;
 
-  if (import.meta.env.BLOB_READ_WRITE_TOKEN) {
-    const blob = await put(filename, file, { access: 'public' });
+  const token = import.meta.env.BLOB_READ_WRITE_TOKEN;
+  if (token) {
+    const blob = await put(filename, file, { access: 'private', token });
     return blob.url;
   }
 

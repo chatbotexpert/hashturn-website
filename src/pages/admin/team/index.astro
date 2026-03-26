@@ -18,44 +18,147 @@ const members = await sql`SELECT id, name, role, bio, avatar, avatar_color FROM 
         No team members yet. <a href="/admin/team/new" style="color:#22C55E;">Add your first member →</a>
       </div>
     ) : (
-      <div style="overflow-x:auto;">
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>Member</th>
-              <th>Role</th>
-              <th>Bio</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {(members as any[]).map(m => (
+      <div>
+        <p style="padding:0.75rem 1.25rem; font-size:0.8rem; color:#6B7280; border-bottom:1px solid #F3F4F6; margin:0;">
+          Drag rows to reorder — order is reflected on the About page.
+        </p>
+        <div style="overflow-x:auto;">
+          <table class="admin-table">
+            <thead>
               <tr>
-                <td>
-                  <div style="display:flex; align-items:center; gap:0.75rem;">
-                    <div style={`width:36px; height:36px; border-radius:50%; background:${m.avatar_color}; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.85rem; color:#fff; flex-shrink:0;`}>
-                      {String(m.avatar) || String(m.name).split(' ').map((n: string) => n[0]).join('').slice(0,2).toUpperCase()}
-                    </div>
-                    <span style="font-weight:500;">{String(m.name)}</span>
-                  </div>
-                </td>
-                <td style="color:#4B5563;">{String(m.role)}</td>
-                <td style="color:#6B7280; max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{String(m.bio)}</td>
-                <td>
-                  <div style="display:flex; gap:0.5rem;">
-                    <a href={`/admin/team/edit/${m.id}`} class="btn-admin btn-admin--outline btn-admin--sm">Edit</a>
-                    <form method="POST" action="/admin/api/team" style="display:inline;" onsubmit="return confirm('Remove this team member?')">
-                      <input type="hidden" name="_action" value="delete" />
-                      <input type="hidden" name="id" value={String(m.id)} />
-                      <button type="submit" class="btn-admin btn-admin--danger btn-admin--sm">Remove</button>
-                    </form>
-                  </div>
-                </td>
+                <th style="width:36px;"></th>
+                <th>Member</th>
+                <th>Role</th>
+                <th>Bio</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody id="sortable-team">
+              {(members as any[]).map(m => (
+                <tr data-id={String(m.id)} draggable="true" class="team-row">
+                  <td class="drag-handle" title="Drag to reorder">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="display:block; margin:auto; opacity:0.4;">
+                      <circle cx="4" cy="3" r="1.2" fill="currentColor"/>
+                      <circle cx="10" cy="3" r="1.2" fill="currentColor"/>
+                      <circle cx="4" cy="7" r="1.2" fill="currentColor"/>
+                      <circle cx="10" cy="7" r="1.2" fill="currentColor"/>
+                      <circle cx="4" cy="11" r="1.2" fill="currentColor"/>
+                      <circle cx="10" cy="11" r="1.2" fill="currentColor"/>
+                    </svg>
+                  </td>
+                  <td>
+                    <div style="display:flex; align-items:center; gap:0.75rem;">
+                      <div style={`width:36px; height:36px; border-radius:50%; background:${m.avatar_color}; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.85rem; color:#fff; flex-shrink:0;`}>
+                        {String(m.avatar) || String(m.name).split(' ').map((n: string) => n[0]).join('').slice(0,2).toUpperCase()}
+                      </div>
+                      <span style="font-weight:500;">{String(m.name)}</span>
+                    </div>
+                  </td>
+                  <td style="color:#4B5563;">{String(m.role)}</td>
+                  <td style="color:#6B7280; max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{String(m.bio)}</td>
+                  <td>
+                    <div style="display:flex; gap:0.5rem;">
+                      <a href={`/admin/team/edit/${m.id}`} class="btn-admin btn-admin--outline btn-admin--sm">Edit</a>
+                      <form method="POST" action="/admin/api/team" style="display:inline;" onsubmit="return confirm('Remove this team member?')">
+                        <input type="hidden" name="_action" value="delete" />
+                        <input type="hidden" name="id" value={String(m.id)} />
+                        <button type="submit" class="btn-admin btn-admin--danger btn-admin--sm">Remove</button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div id="save-bar" style="display:none; padding:0.75rem 1.25rem; background:#F0FDF4; border-top:1px solid #BBF7D0; display:flex; align-items:center; gap:1rem;">
+          <span style="font-size:0.85rem; color:#166534;">Order changed</span>
+          <button id="save-order" class="btn-admin btn-admin--green btn-admin--sm">Save Order</button>
+          <span id="save-status" style="font-size:0.85rem; color:#166534;"></span>
+        </div>
       </div>
     )}
   </div>
 </AdminLayout>
+
+<style>
+  .team-row { cursor: default; transition: background 0.1s; }
+  .team-row.dragging { opacity: 0.4; }
+  .team-row.drag-over { border-top: 2px solid #22C55E; }
+  .drag-handle { cursor: grab; padding: 0 0.5rem; color: #374151; }
+  .drag-handle:active { cursor: grabbing; }
+</style>
+
+<script is:inline>
+  (function () {
+    const tbody = document.getElementById('sortable-team');
+    const saveBar = document.getElementById('save-bar');
+    const saveBtn = document.getElementById('save-order');
+    const saveStatus = document.getElementById('save-status');
+    if (!tbody) return;
+
+    let dragSrc = null;
+    let dirty = false;
+
+    function showSaveBar() {
+      if (saveBar) { saveBar.style.display = 'flex'; dirty = true; }
+    }
+
+    tbody.querySelectorAll('.team-row').forEach(row => {
+      row.addEventListener('dragstart', e => {
+        dragSrc = row;
+        row.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+      });
+      row.addEventListener('dragend', () => {
+        row.classList.remove('dragging');
+        tbody.querySelectorAll('.team-row').forEach(r => r.classList.remove('drag-over'));
+      });
+      row.addEventListener('dragover', e => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        tbody.querySelectorAll('.team-row').forEach(r => r.classList.remove('drag-over'));
+        if (row !== dragSrc) row.classList.add('drag-over');
+      });
+      row.addEventListener('drop', e => {
+        e.preventDefault();
+        if (!dragSrc || dragSrc === row) return;
+        const rows = [...tbody.querySelectorAll('.team-row')];
+        const srcIdx = rows.indexOf(dragSrc);
+        const tgtIdx = rows.indexOf(row);
+        if (srcIdx < tgtIdx) {
+          row.after(dragSrc);
+        } else {
+          row.before(dragSrc);
+        }
+        row.classList.remove('drag-over');
+        showSaveBar();
+      });
+    });
+
+    if (saveBtn) {
+      saveBtn.addEventListener('click', async () => {
+        const order = [...tbody.querySelectorAll('.team-row')].map(r => r.dataset.id);
+        saveBtn.disabled = true;
+        saveStatus.textContent = 'Saving…';
+        try {
+          const res = await fetch('/admin/api/team-reorder', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ order }),
+          });
+          if (res.ok) {
+            saveStatus.textContent = 'Saved!';
+            dirty = false;
+            setTimeout(() => { saveBar.style.display = 'none'; saveStatus.textContent = ''; }, 1500);
+          } else {
+            saveStatus.textContent = 'Error saving order.';
+          }
+        } catch {
+          saveStatus.textContent = 'Network error.';
+        }
+        saveBtn.disabled = false;
+      });
+    }
+  })();
+</script>

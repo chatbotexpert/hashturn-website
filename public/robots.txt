@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://hashturn.com/sitemap-index.xml
+Sitemap: https://www.hashturn.com/sitemap-index.xml

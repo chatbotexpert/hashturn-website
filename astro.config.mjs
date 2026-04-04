@@ -7,7 +7,7 @@ import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://hashturn.com',
+	site: 'https://www.hashturn.com',
 	output: 'static',
 	adapter: vercel(),
 	integrations: [

@@ -19,6 +19,55 @@ const {
 <html lang="en">
   <head>
     <BaseHead title={title} description={description} />
+    <script is:inline type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://www.hashturn.net/#organization",
+      "name": "HashTurn",
+      "url": "https://www.hashturn.net/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://www.hashturn.net/images/hashturn-logo.png" 
+      },
+      "description": "Global business automation agency specializing in Power Automate, custom integration, and DevOps solutions for clients in the US, UK, and worldwide.",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Multan",
+        "addressRegion": "Punjab",
+        "addressCountry": "PK"
+      },
+      "areaServed": [
+        { "@type": "Country", "name": "US" },
+        { "@type": "Country", "name": "GB" },
+        { "@type": "Country", "name": "PK" },
+        { "@type": "Country", "name": "TH" }
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+92-309-0483683",
+        "contactType": "customer service",
+        "email": "hello@hashturn.net",
+        "availableLanguage": ["en", "Urdu"]
+      },
+      "sameAs": [
+        "https://www.linkedin.com/company/hashturn"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://www.hashturn.net/#website",
+      "url": "https://www.hashturn.net/",
+      "name": "HashTurn",
+      "publisher": {
+        "@id": "https://www.hashturn.net/#organization"
+      }
+    }
+  ]
+}
+</script>
   </head>
   <body>
     <Nav />

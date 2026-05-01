@@ -7,18 +7,20 @@ import SiteFooter from '../components/SiteFooter.astro';
 interface Props {
   title?: string;
   description?: string;
+  image?: any;
 }
 
 const {
   title = 'HashTurn — Business Automation Experts',
   description = 'HashTurn builds custom automation systems that eliminate repetitive tasks, connect your apps, and save your team hundreds of hours every month.',
+  image,
 } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
-    <BaseHead title={title} description={description} />
+    <BaseHead title={title} description={description} image={image} />
     <script is:inline type="application/ld+json">
 {
   "@context": "https://schema.org",
